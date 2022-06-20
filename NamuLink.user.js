@@ -56,6 +56,15 @@
 
             }
             return data.filter((FilterElement) => { return FilterElement != element });
+        },
+        /**
+         * Get elements that are peers of a specific element.
+         * @param {Element} element
+         * @returns {Element[]} Array of elements
+         */
+        Peers: (element) =>
+        {
+            return Array.from(element.parentElement.children).filter((FElement) => { return FElement != element });
         }
     };
 
