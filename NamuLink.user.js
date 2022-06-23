@@ -114,56 +114,6 @@
             {
                 return element.offsetHeight != 0 && element.offsetWidth != 0;
             });
-        },
-        /**
-         * @param {Element[]} array Array of Elements
-         * @param {String} value A CSS value
-         * @returns {Element[]} 
-         */
-        Animation:
-        {
-            Delay: (array, value) =>
-            {
-                return Array.from(array).filter((element) =>
-                {
-                    return getComputedStyle(element).getPropertyPriority("animation-delay") == value || getComputedStyle(element).getPropertyValue("animation-delay") == value
-                });
-            },
-            Direction: (array, value) =>
-            {
-                return Array.from(array).filter((element) =>
-                {
-                    return getComputedStyle(element).getPropertyPriority("animation-direction") == value || getComputedStyle(element).getPropertyValue("animation-direction") == value
-                });
-            },
-            Duration: (array, value) =>
-            {
-                return Array.from(array).filter((element) =>
-                {
-                    return getComputedStyle(element).getPropertyPriority("animation-duration") == value || getComputedStyle(element).getPropertyValue("animation-duration") == value
-                });
-            },
-            FillMode: (array, value) =>
-            {
-                return Array.from(array).filter((element) =>
-                {
-                    return getComputedStyle(element).getPropertyPriority("animation-fill-mode") == value || getComputedStyle(element).getPropertyValue("animation-fill-mode") == value
-                });
-            },
-            IterationCount: (array, value) =>
-            {
-                return Array.from(array).filter((element) =>
-                {
-                    return getComputedStyle(element).getPropertyPriority("animation-iteration-count") == value || getComputedStyle(element).getPropertyValue("animation-iteration-count") == value
-                });
-            },
-            PlayState: (array, value) =>
-            {
-                return Array.from(array).filter((element) =>
-                {
-                    return getComputedStyle(element).getPropertyPriority("animation-play-state") == value || getComputedStyle(element).getPropertyValue("animation-play-state") == value
-                });
-            }
         }
     };
     const Filter =
