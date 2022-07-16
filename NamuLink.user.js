@@ -22,126 +22,61 @@
 // ==/UserScript==
 
 (function() {
-    'use strict';
+    'use strict'
 
-    const unsafeWindow = unsafeWindow == undefined ? window : unsafeWindow
+    const unsafeWindow = window || unsafeWindow
 
     const Generation =
     {
-        /**
-         * Get elements that are parents of a specific element.
-         * @param {Element} element 
-         * @returns {Element[]} Array of elements ( e.g. [html, body, div])
-         */
         Parents: (element) =>
         {
-            var data = [element];
+            var data = [element]
             while (data[0].parentElement != null)
             {
-                data = [data[0].parentElement].concat(data);
-            };
-            return data.filter((FilterElement) => { return FilterElement != element });
+                data = [data[0].parentElement].concat(data)
+            }
+            return data.filter((FilterElement) => { return FilterElement != element })
         },
-        /**
-         * Get elements that are children of a specific element.
-         * @param {Element} element 
-         * @returns {Element[]} Array of elements
-         */
         Children: (element) =>
         {
-            //TODO: update
-            var data = [element];
+            var data = [element]
             while (Array.from(data).every((element) => { element.children.length == 0 }))
             {
-
+                
             }
-            return data.filter((FilterElement) => { return FilterElement != element });
+            return data.filter((FilterElement) => { return FilterElement != element })
         },
-        /**
-         * Get elements that are peers of a specific element.
-         * @param {Element} element
-         * @returns {Element[]} Array of elements
-         */
         Peers: (element) =>
         {
-            return Array.from(element.parentElement.children).filter((FElement) => { return FElement != element });
+            return Array.from(element.parentElement.children).filter((FElement) => { return FElement != element })
         }
-    };
+    }
 
     const CSSMatch = 
     {
-        /**
-         * Get elements that has a specific CSS value by checking ONLY item of an array.
-         * @param {Element[]} array Array of Elements
-         * @param {string} value A CSS value
-         * @returns {Element[]}
-         */
-        Display: (array, value) =>
-        {
-            return Array.from(array).filter((element) =>
-            {
-                return getComputedStyle(element).getPropertyPriority("display") == value || getComputedStyle(element).getPropertyValue("display") == value
-            });
-        },
-        /**
-         * Get elements that has a 'display: block' CSS value by checking item of an array and its parents.
-         * @param {Element[]} array Array of Elements
-         * @returns {Element[]} 
-         */
-        DisplayBlockParent: (array) =>
-        {
-            Array.from(array).forEach(() =>
-            {
-                array = Array.from(array).filter((element) => { return getComputedStyle(element).getPropertyPriority("display") == "block"
-                || getComputedStyle(element).getPropertyValue("display") == "block"
-                || Array.from(Generation.Parents(element)).every((GElement) => {
-                    getComputedStyle(GElement).getPropertyPriority("display") == "block"
-                    || getComputedStyle(GElement).getPropertyValue("display") == "block"
-                    || getComputedStyle(GElement).getPropertyPriority("display") == ""
-                    || getComputedStyle(GElement).getPropertyValue("display") == ""
-                })});
-            });
-            return array;
-        },
-        /**
-         * Get elements that are visible.
-         * @param {Element[]} array Array of Elements
-         * @returns {Element[]} 
-         */
         Visible: (array) =>
         {
             return Array.from(array).filter((element) => 
             {
-                return element.offsetHeight != 0 && element.offsetWidth != 0;
-            });
+                return element.offsetHeight >= 10 && element.offsetWidth >= 10
+            })
         }
-    };
-    const Filter =
-    {
-        BackgroundImageFilled: (array) =>
-        {
-            return Array.from(array).filter((element) =>
-            {
-                return getComputedStyle(element).getPropertyPriority("background-image") != "none" || getComputedStyle(element).getPropertyValue("background-image") != "none"
-            });
-        }        
-    };
+    }
     const Format =
     {
         Domain: (text) =>
         {
-            return new unsafeWindow.RegExp(/[\u3131-\uD79DA-z0-9]{1,}[^\u3131-\uD79DA-z0-9]{0,}(com|net|org|kr|한국|[\u3131-\uD79DA-z0-9]{2}[^\u3131-\uD79DA-z0-9]{0,}kr|[\u3131-\uD79DA-z0-9]{2}[^\u3131-\uD79DA-z0-9]{0,}한국|me|at|io|club|online|market|store|site|one|space|blog|tech|llc|homes|press|software|co|cloud|live|[A-z]{2,8})/gui).test(text);
+            return new unsafeWindow.RegExp(/[\u3131-\uD79DA-z0-9]{1,}[^\u3131-\uD79DA-z0-9]{0,}(com|net|org|kr|한국|[\u3131-\uD79DA-z0-9]{2}[^\u3131-\uD79DA-z0-9]{0,}kr|[\u3131-\uD79DA-z0-9]{2}[^\u3131-\uD79DA-z0-9]{0,}한국|me|at|io|club|online|market|store|site|one|space|blog|tech|llc|homes|press|software|co|cloud|live|[A-z]{2,8})/gui).test(text)
         },
         HEXColor: (text) =>
-        {
-            return new unsafeWindow.RegExp(/rgb\([0-9]{1,3},[ ]{0,}[0-9]{1,3},[ ]{0,}[0-9]{1,3}\)/).test(text);
+        {         
+            return new unsafeWindow.RegExp(/rgb\([0-9]{1,3},[ ]{0,}[0-9]{1,3},[ ]{0,}[0-9]{1,3}\)/).test(text)
         }
-    };
+    }
     
-    unsafeWindow.console.log("NamuLink: Initialized.");
+    unsafeWindow.console.log("NamuLink: Initialized.")
 
-    var VisibleElementArray = CSSMatch.Visible(document.querySelectorAll("*"));
-    var VisibleinitAnimation = CSSMatch.Animation.PlayState(VisibleElementArray, "running");
-    var PowerLinkObserver = new MutationObserver();
+    var VisibleElementArray = CSSMatch.Visible(document.querySelectorAll("*"))
+    new MutationObserver()
 
-})();
+})()
