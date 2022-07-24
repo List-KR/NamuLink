@@ -46,24 +46,26 @@
         }
     }
 
-    const CheckPowerLinkLabel = (thisArg, argsList) =>
+    const GetBoxRate = (e) =>
     {
-        return argsList[0] == "click" && (4.38 < thisArg.offsetWidth / thisArg.offsetHeight < 4.39)
+        return e.offsetWidth / e.offsetHeight
     }
 
-    const HideElement = setInterval((e) =>
+    const CheckPowerLinkLabel = (thisArg, argsList) =>
     {
-        e.style.display = "none"
-    }, 10)
+        return argsList[0] == "click" && 4.38 < GetBoxRate(thisArg) && GetBoxRate(thisArg) < 4.39
+    }
 
     EventTarget.prototype.addEventListener = new Proxy(
         EventTarget.prototype.addEventListener,
         {
             apply: (target, thisArg, argsList) =>
             {
-                if (CheckPowerLinkLabel)
+                if (CheckPowerLinkLabel(thisArg, argsList))
                 {
-                    HideElement(Gen.Parents(thisArg).filter((e) => e.offsetWidth / e.offsetHeight > 1)[0])
+                    setInterval((e) => {
+                        e.style.display = "none"
+                    }, 10, Gen.Parents(thisArg).filter((e) => GetBoxRate(e) > 1)[0])
                     Reflect.apply(target, thisArg, argsList)
                 }
                 else
