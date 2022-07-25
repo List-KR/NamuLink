@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.0
+// @version      1.0.1
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -56,8 +56,8 @@
         return argsList[0] == "click" && 4.38 < GetBoxRate(thisArg) && GetBoxRate(thisArg) < 4.39
     }
 
-    EventTarget.prototype.addEventListener = new Proxy(
-        EventTarget.prototype.addEventListener,
+    win.EventTarget.prototype.addEventListener = new Proxy(
+        win.EventTarget.prototype.addEventListener,
         {
             apply: (target, thisArg, argsList) =>
             {
@@ -76,8 +76,8 @@
         }
     )
 
-    TextDecoder.prototype.decode = new Proxy(
-        TextDecoder.prototype.decode,
+    win.TextDecoder.prototype.decode = new Proxy(
+        win.TextDecoder.prototype.decode,
         {
             apply: (target, thisArg, argsList) =>
             {
