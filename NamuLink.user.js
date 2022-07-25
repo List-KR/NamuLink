@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.0.1
+// @version      1.0.2
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -65,7 +65,7 @@
                 {
                     setInterval((e) => {
                         e.style.display = "none"
-                    }, 10, Gen.Parents(thisArg).filter((e) => GetBoxRate(e) > 1)[0])
+                    }, 10, Gen.Parents(thisArg).filter((e) => GetBoxRate(e) > 1 && e.offsetHeight < 250)[0])
                     Reflect.apply(target, thisArg, argsList)
                 }
                 else
