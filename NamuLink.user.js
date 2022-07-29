@@ -13,6 +13,9 @@
 //
 // @match        https://namu.wiki/w/*
 // @exclude      https://namu.wiki/w/%EC%9C%84%ED%82%A4%EC%9A%B4%EC%98%81:*
+// @exclude      https://namu.wiki/w/member/login*
+// @exclude      https://namu.wiki/w/member/recover_password*
+// @exclude      https://namu.wiki/w/member/signup*
 //
 // @description        NamuLink blocks the license-abused PowerLink advertisement on NamuWiki.
 //
