@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.1
+// @version      1.1.1
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -71,7 +71,7 @@
                     {
                         if (e != undefined) e.style.display = "none"
                     }, 100, Gen.Parents(PowerLinkLabel).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
-                    .reverse().find((e) => { return e.innerText != "" && Gen.Children(e).includes(PowerLinkLabel) }))
+                    .reverse().find((e) => { return e.innerText == "" && Gen.Children(e).includes(PowerLinkLabel) }))
                 }
                 else
                 {
