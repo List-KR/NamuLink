@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.1.2
+// @version      1.1.3
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -61,7 +61,7 @@
         {
             apply: (target, thisArg, argsList) =>
             {
-                if (argsList[0] == "click" && 4 < GetBoxRate(thisArg) && GetBoxRate(thisArg) < 4.5) // PowerLinkLabel Label
+                if (argsList[0] == "click" && 4 < GetBoxRate(thisArg) && GetBoxRate(thisArg) < 5) // PowerLinkLabel Label
                 {
                     PowerLinkLabel = thisArg
                 }
