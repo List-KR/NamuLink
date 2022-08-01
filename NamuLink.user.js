@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.1.1
+// @version      1.1.2
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -61,7 +61,7 @@
         {
             apply: (target, thisArg, argsList) =>
             {
-                if (argsList[0] == "click" && 4.38 < GetBoxRate(thisArg) && GetBoxRate(thisArg) < 4.5) // PowerLinkLabel Label
+                if (argsList[0] == "click" && 4 < GetBoxRate(thisArg) && GetBoxRate(thisArg) < 4.5) // PowerLinkLabel Label
                 {
                     PowerLinkLabel = thisArg
                 }
@@ -92,9 +92,11 @@
                     setInterval((e) =>
                     {
                         if (e != undefined) e.forEach((k) => { k.style.display = "none" })
-                    }, 100, Array.from(document.querySelectorAll("*")).filter((e) => { return Gen.Parents(Array.from(document.querySelectorAll("*"))
-                    .filter((e) => { return getComputedStyle(e).getPropertyValue("animation-iteration-count") == "infinite" }))
-                    .every((k) => { return e.contains(k) })}).filter((e) => { return e.innerText == "" }))
+                    }, 100, Array.from(document.querySelectorAll("*"))
+                    .filter((e) => { return e.innerText == "" && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20
+                    && Array.from(document.querySelectorAll("*"))
+                    .filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") == "infinite" })
+                    .every((k) => { return e.contains(k) }) }))
                     return new RangeError()
                 }
                 else
