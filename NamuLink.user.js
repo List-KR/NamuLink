@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.1.3
+// @version      1.1.4
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -54,6 +54,15 @@
         return e.offsetWidth / e.offsetHeight
     }
 
+    const HideElementsImportant = (e) =>
+    {
+        if (e == undefined) return undefined
+        setInterval((k) =>
+        {
+            Array.from(k).forEach((o) => { o.style.setProperty("display", "none", "important") })
+        }, 50, e)
+    }
+
     var PowerLinkLabel;
 
     win.EventTarget.prototype.addEventListener = new Proxy(
@@ -67,11 +76,8 @@
                 }
                 else if (PowerLinkLabel != undefined && argsList[0] == "click" && /^.{1,}$/.test(thisArg.innerText)) // PowerLinkLabel Content
                 {
-                    setInterval((e) =>
-                    {
-                        if (e != undefined) e.style.display = "none"
-                    }, 100, Gen.Parents(PowerLinkLabel).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
-                    .reverse().find((e) => { return e.innerText == "" && Gen.Children(e).includes(PowerLinkLabel) }))
+                    HideElementsImportant([Gen.Parents(PowerLinkLabel).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
+                    .reverse().find((e) => { return e.innerText == "" && Gen.Children(e).includes(PowerLinkLabel) })])
                 }
                 else
                 {
@@ -89,10 +95,7 @@
                 const original = Reflect.apply(target, thisArg, argsList)
                 if (/\/\/adcr\.naver\.com\//.test(original.toString()))
                 {
-                    setInterval((e) =>
-                    {
-                        if (e != undefined) e.forEach((k) => { k.style.display = "none" })
-                    }, 100, Array.from(document.querySelectorAll("*"))
+                    HideElementsImportant(Array.from(document.querySelectorAll("*"))
                     .filter((e) => { return e.innerText == "" && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20
                     && Array.from(document.querySelectorAll("*"))
                     .filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") == "infinite" })
