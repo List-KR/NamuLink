@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.1.4
+// @version      1.1.5
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -56,11 +56,11 @@
 
     const HideElementsImportant = (e) =>
     {
-        if (e == undefined) return undefined
+        if (e == undefined || e.every((k) => { return k == undefined })) return undefined
         setInterval((k) =>
         {
             Array.from(k).forEach((o) => { o.style.setProperty("display", "none", "important") })
-        }, 50, e)
+        }, 50, e.filter((k) => k != undefined))
     }
 
     var PowerLinkLabel;
