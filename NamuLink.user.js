@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.1.5
+// @version      1.1.6
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -76,13 +76,10 @@
                 }
                 else if (PowerLinkLabel != undefined && argsList[0] == "click" && /^.{1,}$/.test(thisArg.innerText)) // PowerLinkLabel Content
                 {
-                    HideElementsImportant([Gen.Parents(PowerLinkLabel).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
-                    .reverse().find((e) => { return e.innerText == "" && Gen.Children(e).includes(PowerLinkLabel) })])
+                    HideElementsImportant(Gen.Parents(PowerLinkLabel).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
+                    .filter((e) => { return e.innerText == "" && Gen.Children(e).includes(PowerLinkLabel) }))
                 }
-                else
-                {
-                    Reflect.apply(target, thisArg, argsList)
-                }
+                Reflect.apply(target, thisArg, argsList)
             }
         }
     )
