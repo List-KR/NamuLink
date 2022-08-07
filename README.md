@@ -15,6 +15,17 @@ https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
         https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
         ```
     4. Confirm metadata of the userscript and click `Install`.
+
+    <details>
+    <summary>Compatibility Table</summary>
+
+    Browser Extension | License | Status
+    ----------------- | ------ | -------
+    [Tampermonkey](https://www.tampermonkey.net/) | Proprietary (Donationware) | ✔
+    [Greasemonkey](https://www.greasespot.net/) | MIT | ✘
+    [Violentmonkey](https://violentmonkey.github.io/) | MIT | ✔
+
+    </details>
     
 - AdGuard for Windows
     1. Click `Settings`.
