@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.1.6
+// @version      1.2
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -63,6 +63,12 @@
         }, 50, e.filter((k) => k != undefined))
     }
 
+    const HideArcaliveAdver = () =>
+    {
+        Array.from(document.querySelectorAll("iframe[src]")).filter((e) => { return /\/\/arca\.live\/external\/callad\?slug=/.test(e.getAttribute("src")) })
+        .forEach((e) => { HideElementsImportant(Gen.Parents(e).filter((o) => { return o.innerText == "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15 }))})
+    }
+
     var PowerLinkLabel;
 
     win.EventTarget.prototype.addEventListener = new Proxy(
@@ -90,6 +96,7 @@
             apply: (target, thisArg, argsList) =>
             {
                 const original = Reflect.apply(target, thisArg, argsList)
+                HideArcaliveAdver()
                 if (/\/\/adcr\.naver\.com\//.test(original.toString()))
                 {
                     HideElementsImportant(Array.from(document.querySelectorAll("*"))
@@ -106,4 +113,9 @@
             }
         }
     )
+
+    document.addEventListener("DOMContentLoaded", () =>
+    {
+        HideArcaliveAdver()
+    })
 })()
