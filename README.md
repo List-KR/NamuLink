@@ -74,4 +74,4 @@ https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 
 
 ### Why List-KR created NamuLink?
-Unlike license of List-KR Script, NamuLink is under MIT license that allows other software to use this userscript without using the same license.
+Unlike license of List-KR Script, NamuLink is licensed under MIT license that allows other software to use this userscript without using the same license.
