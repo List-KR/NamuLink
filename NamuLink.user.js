@@ -24,107 +24,107 @@
 // ==/UserScript==
 
 (() => {
-    'use strict'
+	'use strict'
 
-    const win = unsafeWindow != undefined ? unsafeWindow : window
+	const win = unsafeWindow != undefined ? unsafeWindow : window
 
-    const Gen =
-    {
-        Parents: (element) =>
-        {
-            var data = [element]
-            while (data[0].parentElement != null)
-            {
-                data = [data[0].parentElement].concat(data)
-            }
-            return data.filter((FilterElement) => { return FilterElement != element })
-        },
-        Children: (element) =>
-        {
-            return Array.from(element.querySelectorAll("*"))
-        },
-        Peers: (element) =>
-        {
-            return Array.from(element.parentElement.children).filter((FElement) => { return FElement != element })
-        }
-    }
+	const Gen =
+	{
+		Parents: (element) =>
+		{
+			var data = [element]
+			while (data[0].parentElement != null)
+			{
+				data = [data[0].parentElement].concat(data)
+			}
+			return data.filter((FilterElement) => { return FilterElement != element })
+		},
+		Children: (element) =>
+		{
+			return Array.from(element.querySelectorAll("*"))
+		},
+		Peers: (element) =>
+		{
+			return Array.from(element.parentElement.children).filter((FElement) => { return FElement != element })
+		}
+	}
 
-    const GetBoxRate = (e) =>
-    {
-        return e.offsetWidth / e.offsetHeight
-    }
+	const GetBoxRate = (e) =>
+	{
+		return e.offsetWidth / e.offsetHeight
+	}
 
-    const HideElementsImportant = (e) =>
-    {
-        if (e == undefined || e.every((k) => { return k == undefined })) return undefined
-        setInterval((k) =>
-        {
-            Array.from(k).forEach((o) => { o.style.setProperty("display", "none", "important") })
-        }, 50, e.filter((k) => k != undefined))
-        return e.filter((k) => k != undefined).length
-    }
+	const HideElementsImportant = (e) =>
+	{
+		if (e == undefined || e.every((k) => { return k == undefined })) return undefined
+		setInterval((k) =>
+		{
+			Array.from(k).forEach((o) => { o.style.setProperty("display", "none", "important") })
+		}, 50, e.filter((k) => k != undefined))
+		return e.filter((k) => k != undefined).length
+	}
 
-    const HideArcaliveAdver = () =>
-    {
-        Array.from(document.querySelectorAll("iframe[src]")).filter((e) => { return /\/\/arca\.live\/external\/callad\?slug=/.test(e.getAttribute("src")) })
-        .forEach((e) => { HideElementsImportant(Gen.Parents(e).filter((o) => { return o.innerText == "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15 }))})
-    }
+	const HideArcaliveAdver = () =>
+	{
+		Array.from(document.querySelectorAll("iframe[src]")).filter((e) => { return /\/\/arca\.live\/external\/callad\?slug=/.test(e.getAttribute("src")) })
+		.forEach((e) => { HideElementsImportant(Gen.Parents(e).filter((o) => { return o.innerText == "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15 }))})
+	}
 
-    var PowerLinkLabelCache = []
+	var PowerLinkLabelCache = []
 
-    win.EventTarget.prototype.addEventListener = new Proxy(
-        win.EventTarget.prototype.addEventListener,
-        {
-            apply: (target, thisArg, argsList) =>
-            {
-                if (argsList[0] == "click" && GetBoxRate(thisArg) > 2) // PowerLinkLabelCache Label
-                {
-                    PowerLinkLabelCache.push(thisArg)
-                }
-                else if (argsList[0] == "click" && /^.{1,}$/.test(thisArg.innerText)) // PowerLinkLabelCache Content
-                {
-                    for (var o of PowerLinkLabelCache)
-                    {
-                        if (HideElementsImportant(Gen.Parents(o).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
-                        .filter((e) => { return e.innerText == "" && Gen.Children(e).includes(o) }))
-                        > 0)
-                        {
-                            PowerLinkLabelCache = []
-                            break
-                        }
-                    }
-                }
-                Reflect.apply(target, thisArg, argsList)
-            }
-        }
-    )
+	win.EventTarget.prototype.addEventListener = new Proxy(
+		win.EventTarget.prototype.addEventListener,
+		{
+			apply: (target, thisArg, argsList) =>
+			{
+				if (argsList[0] == "click" && GetBoxRate(thisArg) > 2) // PowerLinkLabelCache Label
+				{
+					PowerLinkLabelCache.push(thisArg)
+				}
+				else if (argsList[0] == "click" && /^.{1,}$/.test(thisArg.innerText)) // PowerLinkLabelCache Content
+				{
+					for (var o of PowerLinkLabelCache)
+					{
+						if (HideElementsImportant(Gen.Parents(o).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
+						.filter((e) => { return e.innerText == "" && Gen.Children(e).includes(o) }))
+						> 0)
+						{
+							PowerLinkLabelCache = []
+							break
+						}
+					}
+				}
+				Reflect.apply(target, thisArg, argsList)
+			}
+		}
+	)
 
-    win.TextDecoder.prototype.decode = new Proxy(
-        win.TextDecoder.prototype.decode,
-        {
-            apply: (target, thisArg, argsList) =>
-            {
-                const original = Reflect.apply(target, thisArg, argsList)
-                HideArcaliveAdver()
-                if (/\/\/adcr\.naver\.com\//.test(original.toString()))
-                {
-                    HideElementsImportant(Array.from(document.querySelectorAll("*"))
-                    .filter((e) => { return e.innerText == "" && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20
-                    && Array.from(document.querySelectorAll("*"))
-                    .filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") == "infinite" })
-                    .every((k) => { return e.contains(k) }) }))
-                    return new RangeError()
-                }
-                else
-                {
-                    return original
-                }
-            }
-        }
-    )
+	win.TextDecoder.prototype.decode = new Proxy(
+		win.TextDecoder.prototype.decode,
+		{
+			apply: (target, thisArg, argsList) =>
+			{
+				const original = Reflect.apply(target, thisArg, argsList)
+				HideArcaliveAdver()
+				if (/\/\/adcr\.naver\.com\//.test(original.toString()))
+				{
+					HideElementsImportant(Array.from(document.querySelectorAll("*"))
+					.filter((e) => { return e.innerText == "" && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20
+					&& Array.from(document.querySelectorAll("*"))
+					.filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") == "infinite" })
+					.every((k) => { return e.contains(k) }) }))
+					return new RangeError()
+				}
+				else
+				{
+					return original
+				}
+			}
+		}
+	)
 
-    document.addEventListener("DOMContentLoaded", () =>
-    {
-        HideArcaliveAdver()
-    })
+	document.addEventListener("DOMContentLoaded", () =>
+	{
+		HideArcaliveAdver()
+	})
 })()
