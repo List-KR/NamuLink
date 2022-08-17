@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.2
+// @version      1.2.1
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -61,6 +61,7 @@
         {
             Array.from(k).forEach((o) => { o.style.setProperty("display", "none", "important") })
         }, 50, e.filter((k) => k != undefined))
+        return e.filter((k) => k != undefined).length
     }
 
     const HideArcaliveAdver = () =>
@@ -69,21 +70,29 @@
         .forEach((e) => { HideElementsImportant(Gen.Parents(e).filter((o) => { return o.innerText == "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15 }))})
     }
 
-    var PowerLinkLabel;
+    var PowerLinkLabelCache = []
 
     win.EventTarget.prototype.addEventListener = new Proxy(
         win.EventTarget.prototype.addEventListener,
         {
             apply: (target, thisArg, argsList) =>
             {
-                if (argsList[0] == "click" && 4 < GetBoxRate(thisArg) && GetBoxRate(thisArg) < 5) // PowerLinkLabel Label
+                if (argsList[0] == "click" && GetBoxRate(thisArg) > 2) // PowerLinkLabelCache Label
                 {
-                    PowerLinkLabel = thisArg
+                    PowerLinkLabelCache.push(thisArg)
                 }
-                else if (PowerLinkLabel != undefined && argsList[0] == "click" && /^.{1,}$/.test(thisArg.innerText)) // PowerLinkLabel Content
+                else if (argsList[0] == "click" && /^.{1,}$/.test(thisArg.innerText)) // PowerLinkLabelCache Content
                 {
-                    HideElementsImportant(Gen.Parents(PowerLinkLabel).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
-                    .filter((e) => { return e.innerText == "" && Gen.Children(e).includes(PowerLinkLabel) }))
+                    for (var o of PowerLinkLabelCache)
+                    {
+                        if (HideElementsImportant(Gen.Parents(o).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
+                        .filter((e) => { return e.innerText == "" && Gen.Children(e).includes(o) }))
+                        > 0)
+                        {
+                            PowerLinkLabelCache = []
+                            break
+                        }
+                    }
                 }
                 Reflect.apply(target, thisArg, argsList)
             }
