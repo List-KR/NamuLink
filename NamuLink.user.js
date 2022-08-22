@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.2.1
+// @version      1.2.2
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -57,11 +57,13 @@
 	const HideElementsImportant = (e) =>
 	{
 		if (e == undefined || e.every((k) => { return k == undefined })) return undefined
+		let target = e.filter((k) => k != undefined)
 		setInterval((k) =>
 		{
 			Array.from(k).forEach((o) => { o.style.setProperty("display", "none", "important") })
-		}, 50, e.filter((k) => k != undefined))
-		return e.filter((k) => k != undefined).length
+		}, 50, target)
+		console.debug("NamuLink: HideElementsImportant: ", target)
+		return target.length
 	}
 
 	const HideArcaliveAdver = () =>
@@ -89,6 +91,7 @@
 						.filter((e) => { return e.innerText == "" && Gen.Children(e).includes(o) }))
 						> 0)
 						{
+							console.debug("NamuLink: EventTarget.prototype.addEventListener handler: ", PowerLinkLabelCache)
 							PowerLinkLabelCache = []
 							break
 						}
@@ -108,6 +111,7 @@
 				HideArcaliveAdver()
 				if (/\/\/adcr\.naver\.com\//.test(original.toString()))
 				{
+					console.debug("NamuLink: TextDecoder.prototype.decode handler: ", original)
 					HideElementsImportant(Array.from(document.querySelectorAll("*"))
 					.filter((e) => { return e.innerText == "" && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20
 					&& Array.from(document.querySelectorAll("*"))
