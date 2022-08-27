@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.2.2
+// @version      1.2.3
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -26,7 +26,7 @@
 (() => {
 	'use strict'
 
-	const win = unsafeWindow != undefined ? unsafeWindow : window
+	const win = typeof unsafeWindow != "undefined" ? unsafeWindow : window
 
 	const Gen =
 	{
