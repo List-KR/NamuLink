@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.2.3
+// @version      1.2.4
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -72,6 +72,11 @@
 		.forEach((e) => { HideElementsImportant(Gen.Parents(e).filter((o) => { return o.innerText == "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15 }))})
 	}
 
+	const HideJSONPowerLink = () =>
+	{
+		HideElementsImportant(Array.from(document.querySelectorAll("iframe[src*='//arca.live/static/ad/powerlink.html?size=']")).filter((e) => { return e.offsetHeight > 100 && e.offsetWidth > 100 }))
+	}
+
 	var PowerLinkLabelCache = []
 
 	win.EventTarget.prototype.addEventListener = new Proxy(
@@ -130,5 +135,6 @@
 	document.addEventListener("DOMContentLoaded", () =>
 	{
 		HideArcaliveAdver()
+		HideJSONPowerLink()
 	})
 })()
