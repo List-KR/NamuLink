@@ -17,7 +17,7 @@
 // @exclude      https://namu.wiki/w/member/recover_password*
 // @exclude      https://namu.wiki/w/member/signup*
 //
-// @description        NamuLink blocks the license-abused PowerLink advertisement on NamuWiki.
+// @description  NamuLink blocks the license-abused PowerLink advertisement on NamuWiki.
 //
 // @grant        unsafeWindow
 // @run-at       document-start
