@@ -8,7 +8,7 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.2.5
+// @version      1.2.6
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/w/*
@@ -119,7 +119,7 @@
 				{
 					console.debug("NamuLink: TextDecoder.prototype.decode handler: ", original)
 					HideElementsImportant(Array.from(document.querySelectorAll("*"))
-					.filter((e) => { return e.innerText == "" && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20
+					.filter((e) => { return /^(|[​\n\t ]{1,})$/.test(e.innerText) && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 // zero-width space (U+200B) included
 					&& Array.from(document.querySelectorAll("*"))
 					.filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") == "infinite" })
 					.every((k) => { return e.contains(k) }) }))
