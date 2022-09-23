@@ -8,14 +8,10 @@
 // @downloadURL  https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.2.6
+// @version      1.2.7
 // @author       PiQuark6046 and contributors
 //
-// @match        https://namu.wiki/w/*
-// @exclude      https://namu.wiki/w/%EC%9C%84%ED%82%A4%EC%9A%B4%EC%98%81:*
-// @exclude      https://namu.wiki/w/member/login*
-// @exclude      https://namu.wiki/w/member/recover_password*
-// @exclude      https://namu.wiki/w/member/signup*
+// @match        https://namu.wiki/*
 //
 // @description        NamuLink blocks the license-abused PowerLink advertisement on NamuWiki.
 // @description:ko     NamuLink는 나무위키에 있는 라이선스를 위반한 파워링크 광고를 차단합니다.
@@ -85,7 +81,7 @@
 		{
 			apply: (target, thisArg, argsList) =>
 			{
-				if (argsList[0] == "click" && GetBoxRate(thisArg) > 2) // PowerLinkLabelCache Label
+				if (/^https:\/\/namu\.wiki\/w\//.test(location.href) && argsList[0] == "click" && GetBoxRate(thisArg) > 2) // PowerLinkLabelCache Label
 				{
 					PowerLinkLabelCache.push(thisArg)
 				}
