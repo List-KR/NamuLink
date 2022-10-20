@@ -4,7 +4,7 @@ NamuLink blocks PowerLink advertisement on NamuWiki.
 ### Quick Start
 Just click the following URL to detect this userscript.
 
-https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
+https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 
 ### How to install
 - [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) (Recommended if you cannot access AdGuard Premium) - Browser extension
@@ -13,7 +13,7 @@ https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
     3. Click `Install from URL` button.
     4. Input the following URL:
     ```
-    https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
+    https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
     ```
     5. Confirm metadata of the userscript and click `Confirm installation`.
 
@@ -22,7 +22,7 @@ https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
     2. Go to `Utilities` tab.
     3. Input the following URL into `Install from URL`:
         ```
-        https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
+        https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
         ```
     4. Confirm metadata of the userscript and click `Install`.
 
@@ -43,7 +43,7 @@ https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
     3. Click `Add extension`.
     4. Input the following URL:
         ```
-        https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
+        https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
         ```
     5. Click `Install`.
     6. Confirm metadata of the userscript and click `Install`.
@@ -54,7 +54,7 @@ https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
     2. Touch `New extension`.
     3. Input the following URL:
         ```
-        https://github.com/List-KR/NamuLink/raw/main/NamuLink.user.js
+        https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
         ```
     4. Touch `Next`.
     5. Confirm metadata of the userscript and touch `Add`.
