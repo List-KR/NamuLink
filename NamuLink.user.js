@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.3
+// @version      1.3.1
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -104,6 +104,7 @@
 		}
 	)
 
+	/*
 	win.String.fromCharCode = new Proxy(
 		win.String.fromCharCode,
 		{
@@ -128,6 +129,7 @@
 			}
 		}
 	)
+	*/
 
 	document.addEventListener("DOMContentLoaded", () =>
 	{
