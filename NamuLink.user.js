@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.2.9
+// @version      1.3
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -104,8 +104,8 @@
 		}
 	)
 
-	win.TextDecoder.prototype.decode = new Proxy(
-		win.TextDecoder.prototype.decode,
+	win.String.fromCharCode = new Proxy(
+		win.String.fromCharCode,
 		{
 			apply: (target, thisArg, argsList) =>
 			{
@@ -113,7 +113,7 @@
 				HideArcaliveAdver()
 				if (/\/\/adcr\.naver\.com\//.test(original.toString()))
 				{
-					console.debug("NamuLink: TextDecoder.prototype.decode handler: ", original)
+					console.debug("NamuLink: String.fromCharCode handler: ", original)
 					HideElementsImportant(Array.from(document.querySelectorAll("*"))
 					.filter((e) => { return /^(|[​\n\t ]{1,})$/.test(e.innerText) && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 // zero-width space (U+200B) included
 					&& Array.from(document.querySelectorAll("*"))
