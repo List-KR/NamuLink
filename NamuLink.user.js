@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.3.1
+// @version      1.3.2
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -104,13 +104,14 @@
 		}
 	)
 
-	/*
+	const _StringFromCharCode = win.String.fromCharCode
 	win.String.fromCharCode = new Proxy(
 		win.String.fromCharCode,
 		{
 			apply: (target, thisArg, argsList) =>
 			{
-				const original = Reflect.apply(target, thisArg, argsList)
+				var original = ""
+				argsList.forEach((e) => { original += _StringFromCharCode(e) })
 				HideArcaliveAdver()
 				if (/\/\/adcr\.naver\.com\//.test(original.toString()))
 				{
@@ -120,7 +121,7 @@
 					&& Array.from(document.querySelectorAll("*"))
 					.filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") == "infinite" })
 					.every((k) => { return e.contains(k) }) }))
-					return new RangeError()
+					return new SyntaxError()
 				}
 				else
 				{
@@ -129,7 +130,6 @@
 			}
 		}
 	)
-	*/
 
 	document.addEventListener("DOMContentLoaded", () =>
 	{
