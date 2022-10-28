@@ -7,7 +7,7 @@ NamuLink는 나무위키에 있는 파워링크 광고를 차단합니다.
 https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 
 ### 설치하는 방법
-- [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) (AdGuard 프리미엄에 접근하실 수 없으시면 권장됩니다) - 브라우저 확장
+- [Violentmonkey](https://addons.mozilla.org/ko/firefox/addon/violentmonkey/) (AdGuard 프리미엄에 접근하실 수 없으시면 권장됩니다) - 브라우저 확장
     1. `대시보드`를 여세요.
     2. `새로운 유저스크립트` 버튼을 클릭하세요.
     3. `URL에서 설치` 버튼을 클릭하세요.
@@ -19,7 +19,7 @@ https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
     6. 유저스크립트의 메타데이터를 확인하시고 `설치 확인`를 클릭하세요.
     7. 나무위키가 열려진 탭으로 돌아가신 뒤 F5나 Ctrl + R를 누르시거나 리로드 버튼을 클릭함으로써 리로드하세요.
 
-- [Tampermonkey](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/) - 브라우저 확장
+- [Tampermonkey](https://addons.mozilla.org/ko/firefox/addon/tampermonkey/) - 브라우저 확장
     1. Tampermonkey의 설정을 여세요.
     2. `도구` 탭으로 이동하세요.
     3. `Install from URL`로 아래 URL를 입력하세요:
