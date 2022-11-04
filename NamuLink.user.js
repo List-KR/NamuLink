@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.3.2
+// @version      1.4
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -111,22 +111,22 @@
 			apply: (target, thisArg, argsList) =>
 			{
 				var original = ""
-				argsList.forEach((e) => { original += _StringFromCharCode(e) })
+				for (var e of argsList)
+				{
+					original += _StringFromCharCode(e)
+					if (/^\[+.+"https:\/\/adcr\.naver\.com\/adcr\?.+/.test(original.toString()))
+					{
+						console.debug("NamuLink: String.fromCharCode handler: ", original)
+						HideElementsImportant(Array.from(document.querySelectorAll("*"))
+						.filter((e) => { return /^(|[​\n\t ]{1,})$/.test(e.innerText) && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 // zero-width space (U+200B) included
+						&& Array.from(document.querySelectorAll("*"))
+						.filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") == "infinite" })
+						.every((k) => { return e.contains(k) }) }))
+						return new SyntaxError()
+					}
+				}
 				HideArcaliveAdver()
-				if (/\/\/adcr\.naver\.com\//.test(original.toString()))
-				{
-					console.debug("NamuLink: String.fromCharCode handler: ", original)
-					HideElementsImportant(Array.from(document.querySelectorAll("*"))
-					.filter((e) => { return /^(|[​\n\t ]{1,})$/.test(e.innerText) && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 // zero-width space (U+200B) included
-					&& Array.from(document.querySelectorAll("*"))
-					.filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") == "infinite" })
-					.every((k) => { return e.contains(k) }) }))
-					return new SyntaxError()
-				}
-				else
-				{
-					return original
-				}
+				return original
 			}
 		}
 	)
