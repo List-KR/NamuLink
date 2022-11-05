@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.4
+// @version      1.4.1
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -114,7 +114,7 @@
 				for (var e of argsList)
 				{
 					original += _StringFromCharCode(e)
-					if (/^\[+.+"https:\/\/adcr\.naver\.com\/adcr\?.+/.test(original.toString()))
+					if (/^\[+.+("|')https:\/\/adcr\.naver\.com\/adcr\?.+/.test(original.toString()))
 					{
 						console.debug("NamuLink: String.fromCharCode handler: ", original)
 						HideElementsImportant(Array.from(document.querySelectorAll("*"))
