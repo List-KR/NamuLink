@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.4.1
+// @version      1.4.2
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -110,13 +110,14 @@
 		{
 			apply: (target, thisArg, argsList) =>
 			{
-				var original = ""
+				var Original = ""
 				for (var e of argsList)
 				{
-					original += _StringFromCharCode(e)
-					if (/^\[+.+("|')https:\/\/adcr\.naver\.com\/adcr\?.+/.test(original.toString()))
+					Original += _StringFromCharCode(e)
+					if (/^\[+.+("|')https:\/\/adcr\.naver\.com\/adcr\?.+/.test(Original.toString()))
 					{
-						console.debug("NamuLink: String.fromCharCode handler: ", original)
+						HideArcaliveAdver()
+						console.debug("NamuLink: String.fromCharCode handler: ", Original)
 						HideElementsImportant(Array.from(document.querySelectorAll("*"))
 						.filter((e) => { return /^(|[​\n\t ]{1,})$/.test(e.innerText) && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 // zero-width space (U+200B) included
 						&& Array.from(document.querySelectorAll("*"))
@@ -125,8 +126,7 @@
 						return new SyntaxError()
 					}
 				}
-				HideArcaliveAdver()
-				return original
+				return Original
 			}
 		}
 	)
