@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.5
+// @version      1.6
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -22,6 +22,8 @@
 
 (() => {
 	'use strict'
+
+	/// APIs
 
 	const win = typeof unsafeWindow != "undefined" ? unsafeWindow : window
 
@@ -54,6 +56,7 @@
 	const HideElementsImportant = (e) =>
 	{
 		let target = e.filter((k) => k != undefined)
+		if (target.length == 0) return 0
 		setInterval((k) =>
 		{
 			Array.from(k).forEach((o) => { o.style.setProperty("display", "none", "important") })
@@ -73,25 +76,77 @@
 		HideElementsImportant(Array.from(document.querySelectorAll("iframe[src*='//arca.live/static/ad/powerlink.html?size=']")).filter((e) => { return e.offsetHeight > 100 && e.offsetWidth > 100 }))
 	}
 
-	const HidePendingPowerLink = () =>
+	const GetPendingPowerLink = () =>
 	{
-		HideElementsImportant(Array.from(document.querySelectorAll("*"))
+		return Array.from(document.querySelectorAll("*"))
 			.filter((e) => { return /^(|[​\n\t ]{1,})$/.test(e.innerText) && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 // zero-width space (U+200B) included
 			&& Array.from(document.querySelectorAll("*"))
 			.filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") == "infinite" })
-			.every((k) => { return e.contains(k) }) }))
+			.every((k) => { return e.contains(k) }) })
 	}
 
-	Object.defineProperty = new Proxy(
-		Object.defineProperty,
+	/// Main
+	// Convert to string: String.fromCharCode TextDecoder.prototype.decode String.prototype.normalize String.fromCodePoint
+	// 
+
+	var PowerLinkLabelCache = []
+
+	EventTarget.prototype.addEventListener = new Proxy(
+		EventTarget.prototype.addEventListener,
+		{
+			apply: (target, thisArg, argsList) =>
+			{
+				if (/^https:\/\/namu\.wiki\/w\//.test(location.href) && argsList[0] == "click" && GetBoxRate(thisArg) > 2) // PowerLinkLabelCache Label
+				{
+					PowerLinkLabelCache.push(thisArg)
+				}
+				else if (argsList[0] == "click" && /^.{1,}$/.test(thisArg.innerText)) // PowerLinkLabelCache Content
+				{
+					for (var o of PowerLinkLabelCache)
+					{
+						if (HideElementsImportant(Gen.Parents(o).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
+						.filter((e) => { return e.innerText == "" && Gen.Children(e).includes(o) }))
+						> 0)
+						{
+							console.debug("NamuLink: EventTarget.prototype.addEventListener handler: ", PowerLinkLabelCache)
+							PowerLinkLabelCache = []
+							break
+						}
+					}
+				}
+				Reflect.apply(target, thisArg, argsList)
+			}
+		}
+	)
+
+	Uint8Array.prototype.slice = new Proxy(
+		Uint8Array.prototype.slice,
 		{
 			apply: (target, thisArg, argsList) =>
 			{
 				var Original = Reflect.apply(target, thisArg, argsList)
-				if (Array.isArray(Original) && /\/\/adcr\.naver\.com\/adcr\?.+,.+/.test(Original.toString()))
+				if (new TextDecoder().decode(Original) instanceof ReferenceError)
 				{
-					HideArcaliveAdver()
-					HidePendingPowerLink()
+					console.debug("NamuLink: Uint8Array.prototype.slice: ", Original)
+					HideElementsImportant(GetPendingPowerLink())
+					return crypto.getRandomValues(new Uint8Array(Original.byteLength))
+				}
+				else
+				{
+					return Original
+				}
+			}
+		}
+	)
+
+	TextDecoder.prototype.decode = new Proxy(
+		TextDecoder.prototype.decode,
+		{
+			apply: (target, thisArg, argsList) =>
+			{
+				var Original = Reflect.apply(target, thisArg, argsList)
+				if (/\[+.+\/\/adcr\.naver\.com\/adcr\?.+,.+/.test(Original.toString()))
+				{
 					return new ReferenceError()
 				}
 				else
