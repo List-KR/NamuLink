@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.6
+// @version      1.6.1
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -90,6 +90,7 @@
 	// 
 
 	var PowerLinkLabelCache = []
+	const BitArrays = [Uint8ClampedArray, Int8Array, Uint8Array]
 
 	EventTarget.prototype.addEventListener = new Proxy(
 		EventTarget.prototype.addEventListener,
@@ -119,25 +120,28 @@
 		}
 	)
 
-	Uint8Array.prototype.slice = new Proxy(
-		Uint8Array.prototype.slice,
-		{
-			apply: (target, thisArg, argsList) =>
+	for (var Obj of BitArrays)
+	{
+		Obj.prototype.slice = new Proxy(
+			Obj.prototype.slice,
 			{
-				var Original = Reflect.apply(target, thisArg, argsList)
-				if (new TextDecoder().decode(Original) instanceof ReferenceError)
+				apply: (target, thisArg, argsList) =>
 				{
-					console.debug("NamuLink: Uint8Array.prototype.slice: ", Original)
-					HideElementsImportant(GetPendingPowerLink())
-					return crypto.getRandomValues(new Uint8Array(Original.byteLength))
-				}
-				else
-				{
-					return Original
+					var Original = Reflect.apply(target, thisArg, argsList)
+					if (new TextDecoder().decode(Original) instanceof ReferenceError)
+					{
+						console.debug("NamuLink: " + Obj.name + ".prototype.slice: ", Original)
+						HideElementsImportant(GetPendingPowerLink())
+						return crypto.getRandomValues(new Obj(Original.byteLength))
+					}
+					else
+					{
+						return Original
+					}
 				}
 			}
-		}
-	)
+		)
+	}
 
 	TextDecoder.prototype.decode = new Proxy(
 		TextDecoder.prototype.decode,
