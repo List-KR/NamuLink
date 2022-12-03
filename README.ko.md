@@ -8,6 +8,18 @@ https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 
 ### 설치하는 방법
 - [Violentmonkey](https://addons.mozilla.org/ko/firefox/addon/violentmonkey/) (AdGuard 프리미엄에 접근하실 수 없으시면 권장됩니다) - 브라우저 확장
+    <details>
+    <summary>Mozilla Firefox에서 설치하는 방법 (동영상)</summary>
+
+    [firefox.webm](https://user-images.githubusercontent.com/98787049/205464257-9113ca81-7f9e-4e85-b4d3-03d225d25e37.webm)
+
+    </details>
+    <details>
+    <summary>Google Chrome에서 설치하는 방법 (동영상)</summary>
+
+    [googlechrome.webm](https://user-images.githubusercontent.com/98787049/205464253-322b5e07-a74e-4c98-b7b4-077ec21be5c2.webm)
+
+    </details>
     1. `대시보드`를 여세요.
     2. `새로운 유저스크립트` 버튼을 클릭하세요.
     3. `URL에서 설치` 버튼을 클릭하세요.
@@ -42,6 +54,12 @@ https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
     </details>
     
 - Windows용 AdGuard
+    <details>
+    <summary>설치하는 방법 (동영상)</summary>
+
+    [adguardforwindows.webm](https://user-images.githubusercontent.com/98787049/205464263-c4d39b8a-23eb-41ad-955a-ccbb2f127788.webm)
+
+    </details>
     1. `설정`을 클릭하세요.
     2. `확장 프로그램`을 클릭하세요.
     3. `확장 프로그램 추가`를 클릭하세요.
