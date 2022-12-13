@@ -57,23 +57,27 @@
 
     const HideArcaliveAdver = () => {
         for (const element of document.querySelectorAll(`iframe[src*="//arca.live/external/callad"]`)) {
-            HideElementsImportant(Gen.Parents(element).filter((o) => {
-                return o.innerText === "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15
-            }))
+            HideElementsImportant(
+                Gen.Parents(element).filter((o) => {
+                    return o.innerText === "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15
+                })
+            )
         }
     }
 
     const HideJSONPowerLink = () => {
-        HideElementsImportant(Array.from(document.querySelectorAll("iframe[src*='//arca.live/static/ad/powerlink.html?size=']")).filter((e) => {
-            return e.offsetHeight > 100 && e.offsetWidth > 100;
-        }));
+        HideElementsImportant(
+            Array.from(document.querySelectorAll("iframe[src*='//arca.live/static/ad/powerlink.html?size=']")).filter((e) => {
+                return e.offsetHeight > 100 && e.offsetWidth > 100;
+            })
+        );
     }
 
     const GetPendingPowerLink = () => {
         return Array.from(document.querySelectorAll("*"))
             .filter((e) => {
-                return /^(|[​\n\t ]{1,})$/.test(e.innerText) &&
-                    getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 && // zero-width space (U+200B) included
+                return /^(|[​\n\t ]{1,})$/.test(e.innerText) && // zero-width space (U+200B) included
+                    getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 &&
                     Array.from(e.children).filter((e) => {
                         return Array.from(e.querySelectorAll("*")).filter((e2) => {
                             return getComputedStyle(e2).getPropertyValue("animation-iteration-count") === "infinite";
@@ -99,13 +103,17 @@
                 } else if (argsList[0] === "click" && /^.{1,}$/.test(thisArg.innerText)) {
                     // PowerLinkLabelCache Content
                     for (const o of PowerLinkLabelCache) {
-                        if (HideElementsImportant(Gen.Parents(o).filter((e) => {
-                                return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20;
-                            })
-                                .filter((e) => {
-                                    return e.innerText === "" && Gen.Children(e).includes(o);
-                                }))
-                            > 0) {
+                        if (
+                            HideElementsImportant(
+                                Gen.Parents(o).filter((e) => {
+                                    return GetBoxRate(e) > 1 &&
+                                        getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 &&
+                                        e.innerText === "" &&
+                                        Gen.Children(e).includes(o);
+                                })
+                            )
+                            > 0
+                        ) {
                             console.debug("NamuLink: EventTarget.prototype.addEventListener handler: ", PowerLinkLabelCache);
                             PowerLinkLabelCache = [];
                             break;
@@ -118,52 +126,39 @@
         }
     )
 
+    const isPowerLink = (input) => {
+        const decoded = new TextDecoder().decode(input);
+        return decoded.includes("adcr.naver.com/adcr");
+    }
+
     for (let Obj of BitArrayObjs8) {
+        const proxyHandler = (target, thisArg, argsList) => {
+            const Original = Reflect.apply(target, thisArg, argsList);
+
+            if (isPowerLink(Original) || isPowerLink(Obj.of(Original).reverse())) {
+                console.debug(`NamuLink: ${Obj.name} proxyHandler: `, Original);
+                HideElementsImportant(GetPendingPowerLink());
+
+                return crypto.getRandomValues(new Obj(Original.byteLength));
+            }
+
+            return Original;
+        };
+
         Obj.prototype.slice = new Proxy(
             Obj.prototype.slice,
             {
-                apply: (target, thisArg, argsList) => {
-                    const Original = Reflect.apply(target, thisArg, argsList);
-
-                    if (new TextDecoder().decode(Original) instanceof ReferenceError
-                        || new TextDecoder().decode(Obj.of(Original).reverse()) instanceof ReferenceError) {
-                        console.debug("NamuLink: " + Obj.name + ".prototype.slice handler: ", Original);
-                        HideElementsImportant(GetPendingPowerLink());
-                        return crypto.getRandomValues(new Obj(Original.byteLength));
-                    } else {
-                        return Original;
-                    }
-                }
+                apply: proxyHandler
             }
         )
 
         Obj.from = new Proxy(
             Obj.from,
             {
-                apply: (target, thisArg, argsList) => {
-                    const Original = Reflect.apply(target, thisArg, argsList);
-                    if (new TextDecoder().decode(Original) instanceof ReferenceError
-                        || new TextDecoder().decode(Obj.of(Original).reverse()) instanceof ReferenceError) {
-                        console.debug("NamuLink: " + Obj.name + ".from handler: ", Original);
-                        HideElementsImportant(GetPendingPowerLink());
-                        return crypto.getRandomValues(new Obj(Original.byteLength));
-                    } else {
-                        return Original;
-                    }
-                }
+                apply: proxyHandler
             }
         )
     }
-
-    TextDecoder.prototype.decode = new Proxy(
-        TextDecoder.prototype.decode,
-        {
-            apply: (target, thisArg, argsList) => {
-                const Original = Reflect.apply(target, thisArg, argsList);
-                return /\[+.+\/\/adcr\.naver\.com\/adcr\?.+,.+/.test(Original) ? new ReferenceError() : Original;
-            }
-        }
-    )
 
     document.addEventListener("DOMContentLoaded", () => {
         HideArcaliveAdver();
