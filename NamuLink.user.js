@@ -16,11 +16,14 @@
 // @description        NamuLink blocks the license-abused PowerLink advertisement on NamuWiki.
 // @description:ko     NamuLink는 나무위키에 있는 라이선스를 위반한 파워링크 광고를 차단합니다.
 //
+// @grant        unsafeWindow
 // @run-at       document-start
 // ==/UserScript==
 
 (() => {
     "use strict";
+
+    unsafeWindow ??= window;
 
     /// APIs
 
@@ -91,10 +94,14 @@
     //
 
     let PowerLinkLabelCache = [];
-    const BitArrayObjs8 = [Uint8ClampedArray, Int8Array, Uint8Array];
+    const BitArrayObjs8 = [
+        unsafeWindow.Uint8ClampedArray,
+        unsafeWindow.Int8Array,
+        unsafeWindow.Uint8Array
+    ];
 
-    EventTarget.prototype.addEventListener = new Proxy(
-        EventTarget.prototype.addEventListener,
+    unsafeWindow.EventTarget.prototype.addEventListener = new Proxy(
+        unsafeWindow.EventTarget.prototype.addEventListener,
         {
             apply: (target, thisArg, argsList) => {
                 if (/^\/w\//.test(location.pathname) && argsList[0] === "click" && GetBoxRate(thisArg) > 2) {
