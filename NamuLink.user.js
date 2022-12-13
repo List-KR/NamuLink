@@ -37,12 +37,7 @@
         },
         Children: (element) => {
             return Array.from(element.querySelectorAll("*"));
-        },
-        // Peers: (element) => {
-        //     return Array.from(element.parentElement.children).filter((FElement) => {
-        //         return FElement !== element
-        //     });
-        // }
+        }
     }
 
     const GetBoxRate = (e) => {
