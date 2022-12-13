@@ -52,7 +52,7 @@
 
 	const HideElementsImportant = (e) =>
 	{
-		let target = e.filter((k) => k !== undefined)
+		const target = e.filter((k) => k !== undefined)
 		if (target.length === 0) return 0
 		setInterval((k) =>
 		{
