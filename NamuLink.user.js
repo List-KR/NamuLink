@@ -94,11 +94,6 @@
     //
 
     let PowerLinkLabelCache = [];
-    const BitArrayObjs8 = [
-        unsafeWindow.Uint8ClampedArray,
-        unsafeWindow.Int8Array,
-        unsafeWindow.Uint8Array
-    ];
 
     unsafeWindow.EventTarget.prototype.addEventListener = new Proxy(
         unsafeWindow.EventTarget.prototype.addEventListener,
@@ -138,34 +133,32 @@
         return decoded.includes("adcr.naver.com/adcr");
     }
 
-    for (let Obj of BitArrayObjs8) {
-        const proxyHandler = (target, thisArg, argsList) => {
-            const Original = Reflect.apply(target, thisArg, argsList);
+    const proxyHandler = (target, thisArg, argsList) => {
+        const Original = Reflect.apply(target, thisArg, argsList);
 
-            if (isPowerLink(Original) || isPowerLink(Obj.of(Original).reverse())) {
-                console.debug(`NamuLink: ${Obj.name} proxyHandler: `, Original);
-                HideElementsImportant(GetPendingPowerLink());
+        if (isPowerLink(Original) || isPowerLink(unsafeWindow.Uint8Array.of(Original).reverse())) {
+            console.debug(`NamuLink: Uint8Array proxyHandler: `, Original);
+            HideElementsImportant(GetPendingPowerLink());
 
-                return crypto.getRandomValues(new Obj(Original.byteLength));
-            }
+            return crypto.getRandomValues(new unsafeWindow.Uint8Array(Original.byteLength));
+        }
 
-            return Original;
-        };
+        return Original;
+    };
 
-        Obj.prototype.slice = new Proxy(
-            Obj.prototype.slice,
-            {
-                apply: proxyHandler
-            }
-        )
+    unsafeWindow.Uint8Array.prototype.slice = new Proxy(
+        unsafeWindow.Uint8Array.prototype.slice,
+        {
+            apply: proxyHandler
+        }
+    )
 
-        Obj.from = new Proxy(
-            Obj.from,
-            {
-                apply: proxyHandler
-            }
-        )
-    }
+    unsafeWindow.Uint8Array.from = new Proxy(
+        unsafeWindow.Uint8Array.from,
+        {
+            apply: proxyHandler
+        }
+    )
 
     document.addEventListener("DOMContentLoaded", () => {
         HideArcaliveAdver();
