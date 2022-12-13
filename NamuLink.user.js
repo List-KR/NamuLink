@@ -28,7 +28,7 @@
 	{
 		Parents: (element) =>
 		{
-			var data = [element]
+			let data = [element]
 			while (data[0].parentElement !== null)
 			{
 				data = [data[0].parentElement].concat(data)
@@ -86,7 +86,7 @@
 	// Convert to string: String.fromCharCode TextDecoder.prototype.decode String.prototype.normalize String.fromCodePoint
 	// 
 
-	var PowerLinkLabelCache = []
+	let PowerLinkLabelCache = []
 	const BitArrayObjs8 = [Uint8ClampedArray, Int8Array, Uint8Array]
 
 	EventTarget.prototype.addEventListener = new Proxy(
@@ -100,7 +100,7 @@
 				}
 				else if (argsList[0] === "click" && /^.{1,}$/.test(thisArg.innerText)) // PowerLinkLabelCache Content
 				{
-					for (var o of PowerLinkLabelCache)
+					for (let o of PowerLinkLabelCache)
 					{
 						if (HideElementsImportant(Gen.Parents(o).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
 						.filter((e) => { return e.innerText === "" && Gen.Children(e).includes(o) }))
@@ -117,14 +117,14 @@
 		}
 	)
 
-	for (var Obj of BitArrayObjs8)
+	for (let Obj of BitArrayObjs8)
 	{
 		Obj.prototype.slice = new Proxy(
 			Obj.prototype.slice,
 			{
 				apply: (target, thisArg, argsList) =>
 				{
-					var Original = Reflect.apply(target, thisArg, argsList)
+					const Original = Reflect.apply(target, thisArg, argsList)
 					if (new TextDecoder().decode(Original) instanceof ReferenceError
 					|| new TextDecoder().decode(Obj.of(Original).reverse()) instanceof ReferenceError)
 					{
@@ -141,14 +141,14 @@
 		)
 	}
 
-	for (var Obj of BitArrayObjs8)
+	for (let Obj of BitArrayObjs8)
 	{
 		Obj.from = new Proxy(
 			Obj.from,
 			{
 				apply: (target, thisArg, argsList) =>
 				{
-					var Original = Reflect.apply(target, thisArg, argsList)
+					const Original = Reflect.apply(target, thisArg, argsList)
 					if (new TextDecoder().decode(Original) instanceof ReferenceError
 					|| new TextDecoder().decode(Obj.of(Original).reverse()) instanceof ReferenceError)
 					{
@@ -170,7 +170,7 @@
 		{
 			apply: (target, thisArg, argsList) =>
 			{
-				var Original = Reflect.apply(target, thisArg, argsList)
+				const Original = Reflect.apply(target, thisArg, argsList)
 				if (/\[+.+\/\/adcr\.naver\.com\/adcr\?.+,.+/.test(Original.toString()))
 				{
 					return new ReferenceError()
