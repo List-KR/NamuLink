@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.6.2
+// @version      1.6.3
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -25,18 +25,18 @@
 
 	/// APIs
 
-	const win = typeof unsafeWindow != "undefined" ? unsafeWindow : window
+	const win = typeof unsafeWindow !== "undefined" ? unsafeWindow : window
 
 	const Gen =
 	{
 		Parents: (element) =>
 		{
 			var data = [element]
-			while (data[0].parentElement != null)
+			while (data[0].parentElement !== null)
 			{
 				data = [data[0].parentElement].concat(data)
 			}
-			return data.filter((FilterElement) => { return FilterElement != element })
+			return data.filter((FilterElement) => { return FilterElement !== element })
 		},
 		Children: (element) =>
 		{
@@ -44,7 +44,7 @@
 		},
 		Peers: (element) =>
 		{
-			return Array.from(element.parentElement.children).filter((FElement) => { return FElement != element })
+			return Array.from(element.parentElement.children).filter((FElement) => { return FElement !== element })
 		}
 	}
 
@@ -55,8 +55,8 @@
 
 	const HideElementsImportant = (e) =>
 	{
-		let target = e.filter((k) => k != undefined)
-		if (target.length == 0) return 0
+		let target = e.filter((k) => k !== undefined)
+		if (target.length === 0) return 0
 		setInterval((k) =>
 		{
 			Array.from(k).forEach((o) => { o.style.setProperty("display", "none", "important") })
@@ -68,7 +68,7 @@
 	const HideArcaliveAdver = () =>
 	{
 		Array.from(document.querySelectorAll("iframe[src]")).filter((e) => { return /\/\/arca\.live\/external\/callad/.test(e.getAttribute("src")) })
-		.forEach((e) => { HideElementsImportant(Gen.Parents(e).filter((o) => { return o.innerText == "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15 }))})
+		.forEach((e) => { HideElementsImportant(Gen.Parents(e).filter((o) => { return o.innerText === "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15 }))})
 	}
 
 	const HideJSONPowerLink = () =>
@@ -81,7 +81,7 @@
 		return Array.from(document.querySelectorAll("*"))
 			.filter((e) => { return /^(|[​\n\t ]{1,})$/.test(e.innerText) && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 // zero-width space (U+200B) included
 			&& Array.from(document.querySelectorAll("*"))
-			.filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") == "infinite" })
+			.filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") === "infinite" })
 			.every((k) => { return e.contains(k) }) })
 	}
 
@@ -97,16 +97,16 @@
 		{
 			apply: (target, thisArg, argsList) =>
 			{
-				if (/^https:\/\/namu\.wiki\/w\//.test(location.href) && argsList[0] == "click" && GetBoxRate(thisArg) > 2) // PowerLinkLabelCache Label
+				if (/^https:\/\/namu\.wiki\/w\//.test(location.href) && argsList[0] === "click" && GetBoxRate(thisArg) > 2) // PowerLinkLabelCache Label
 				{
 					PowerLinkLabelCache.push(thisArg)
 				}
-				else if (argsList[0] == "click" && /^.{1,}$/.test(thisArg.innerText)) // PowerLinkLabelCache Content
+				else if (argsList[0] === "click" && /^.{1,}$/.test(thisArg.innerText)) // PowerLinkLabelCache Content
 				{
 					for (var o of PowerLinkLabelCache)
 					{
 						if (HideElementsImportant(Gen.Parents(o).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
-						.filter((e) => { return e.innerText == "" && Gen.Children(e).includes(o) }))
+						.filter((e) => { return e.innerText === "" && Gen.Children(e).includes(o) }))
 						> 0)
 						{
 							console.debug("NamuLink: EventTarget.prototype.addEventListener handler: ", PowerLinkLabelCache)
