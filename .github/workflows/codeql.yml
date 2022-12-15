@@ -20,7 +20,7 @@ on:
     branches: 
       - "**"
   schedule:
-    - cron: '34 0 * * 2'
+    - cron: "34 0 * * 2"
 
 jobs:
   analyze:
