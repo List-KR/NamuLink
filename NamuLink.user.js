@@ -27,9 +27,8 @@
 
     /// APIs
 
-    const Gen = {
-        Parents: (element) => {
-            const data = [];
+    const getElementParents = (element) => {
+           const data = [];
             let current = element;
 
             while ((current = current.parentElement) !== null) {
@@ -37,46 +36,46 @@
             }
 
             return data;
-        },
-        Children: (element) => {
-            return Array.from(element.querySelectorAll("*"));
-        }
     }
 
-    const GetBoxRate = (e) => {
+    const getElementChildren = (element) => {
+          return Array.from(element.querySelectorAll("*"));
+    };
+
+    const getBoxRate = (e) => {
         return e.offsetWidth / e.offsetHeight;
     }
 
-    const HideElementsImportant = (e) => {
+    const hideElements = (e) => {
         if (e.length === 0) return 0;
 
         for (const element of e) {
             element.style.setProperty("display", "none", "important");
         }
 
-        console.debug("NamuLink: HideElementsImportant: ", e);
+        console.debug("NamuLink: hideElements: ", e);
         return e.length;
     }
 
-    const HideArcaliveAdver = () => {
+    const hideAdver = () => {
         for (const element of document.querySelectorAll(`iframe[src*="//arca.live/external/callad"]`)) {
-            HideElementsImportant(
-                Gen.Parents(element).filter((o) => {
+            hideElements(
+                getElementParents(element).filter((o) => {
                     return o.innerText === "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15
                 })
             )
         }
     }
 
-    const HideJSONPowerLink = () => {
-        HideElementsImportant(
+    const hideJSONPowerLink = () => {
+        hideElements(
             Array.from(document.querySelectorAll("iframe[src*='//arca.live/static/ad/powerlink.html?size=']")).filter((e) => {
                 return e.offsetHeight > 100 && e.offsetWidth > 100;
             })
         );
     }
 
-    const GetPendingPowerLink = () => {
+    const getPendingPowerLink = () => {
         return Array.from(document.querySelectorAll("*"))
             .filter((e) => {
                 return /^(|[​\n\t ]{1,})$/.test(e.innerText) && // zero-width space (U+200B) included
@@ -93,8 +92,8 @@
     // Convert to string: String.fromCharCode TextDecoder.prototype.decode String.prototype.normalize String.fromCodePoint
     //
 
-    let PowerLinkLabelCache = [];
-    const BitArrayObjs8 = [
+    let powerLinkLabelCache = [];
+    const bitArrayObjs8 = [
         unsafeWindow.Uint8ClampedArray,
         unsafeWindow.Int8Array,
         unsafeWindow.Uint8Array
@@ -104,25 +103,25 @@
         unsafeWindow.EventTarget.prototype.addEventListener,
         {
             apply: (target, thisArg, argsList) => {
-                if (/^\/w\//.test(location.pathname) && argsList[0] === "click" && GetBoxRate(thisArg) > 2) {
-                    // PowerLinkLabelCache Label
-                    PowerLinkLabelCache.push(thisArg);
+                if (/^\/w\//.test(location.pathname) && argsList[0] === "click" && getBoxRate(thisArg) > 2) {
+                    // powerLinkLabelCache Label
+                    powerLinkLabelCache.push(thisArg);
                 } else if (argsList[0] === "click" && /^.{1,}$/.test(thisArg.innerText)) {
-                    // PowerLinkLabelCache Content
-                    for (const o of PowerLinkLabelCache) {
+                    // powerLinkLabelCache Content
+                    for (const o of powerLinkLabelCache) {
                         if (
-                            HideElementsImportant(
-                                Gen.Parents(o).filter((e) => {
-                                    return GetBoxRate(e) > 1 &&
+                            hideElements(
+                                getElementParents(o).filter((e) => {
+                                    return getBoxRate(e) > 1 &&
                                         getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 &&
                                         e.innerText === "" &&
-                                        Gen.Children(e).includes(o);
+                                        getElementChildren(e).includes(o);
                                 })
                             )
                             > 0
                         ) {
-                            console.debug("NamuLink: EventTarget.prototype.addEventListener handler: ", PowerLinkLabelCache);
-                            PowerLinkLabelCache = [];
+                            console.debug("NamuLink: EventTarget.prototype.addEventListener handler: ", powerLinkLabelCache);
+                            powerLinkLabelCache = [];
                             break;
                         }
                     }
@@ -138,13 +137,13 @@
         return decoded.includes("adcr.naver.com/adcr");
     }
 
-    for (let Obj of BitArrayObjs8) {
+    for (let Obj of bitArrayObjs8) {
         const proxyHandler = (target, thisArg, argsList) => {
             const Original = Reflect.apply(target, thisArg, argsList);
 
             if (isPowerLink(Original) || isPowerLink(Obj.of(Original).reverse())) {
                 console.debug(`NamuLink: ${Obj.name} proxyHandler: `, Original);
-                HideElementsImportant(GetPendingPowerLink());
+                hideElements(getPendingPowerLink());
 
                 return crypto.getRandomValues(new Obj(Original.byteLength));
             }
@@ -168,7 +167,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        HideArcaliveAdver();
-        HideJSONPowerLink();
+        hideAdver();
+        hideJSONPowerLink();
     })
 })();
