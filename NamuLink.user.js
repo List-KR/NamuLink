@@ -78,7 +78,7 @@
     }
 
     const GetPendingPowerLink = () => {
-        return Array.from(document.querySelectorAll("*"))
+        return Array.from(document.body.querySelectorAll("*"))
             .filter((e) => {
                 return /^(|[​\n\t ]{1,})$/.test(e.innerText) && // zero-width space (U+200B) included
                     getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 &&
