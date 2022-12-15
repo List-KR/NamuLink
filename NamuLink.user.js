@@ -27,55 +27,57 @@
 
     /// APIs
 
-    const getElementParents = (element) => {
-        const data = [];
-        let current = element;
 
-        while ((current = current.parentElement) !== null) {
-            data.push(current);
+    const Gen = {
+        Parents: (element) => {
+            const data = [];
+            let current = element;
+
+            while ((current = current.parentElement) !== null) {
+                data.push(current);
+            }
+
+            return data;
+        },
+        Children: (element) => {
+            return Array.from(element.querySelectorAll("*"));
         }
-
-        return data;
     }
 
-    const getElementChildren = (element) => {
-        return Array.from(element.querySelectorAll("*"));
-    };
-
-    const getBoxRate = (e) => {
+    const GetBoxRate = (e) => {
         return e.offsetWidth / e.offsetHeight;
     }
 
-    const hideElements = (e) => {
+    const HideElementsImportant = (e) => {
         if (e.length === 0) return 0;
 
         for (const element of e) {
             element.style.setProperty("display", "none", "important");
         }
 
-        console.debug("NamuLink: hideElements: ", e);
+        console.debug("NamuLink: HideElementsImportant: ", e);
         return e.length;
     }
 
-    const hideAdver = () => {
+    const HideArcaliveAdver = () => {
         for (const element of document.querySelectorAll(`iframe[src*="//arca.live/external/callad"]`)) {
-            hideElements(
-                getElementParents(element).filter((o) => {
+            HideElementsImportant(
+                Gen.Parents(element).filter((o) => {
                     return o.innerText === "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15
                 })
             )
         }
     }
 
-    const hideJSONPowerLink = () => {
-        hideElements(
+    const HideJSONPowerLink = () => {
+        HideElementsImportant(
             Array.from(document.querySelectorAll("iframe[src*='//arca.live/static/ad/powerlink.html?size=']")).filter((e) => {
                 return e.offsetHeight > 100 && e.offsetWidth > 100;
             })
         );
     }
 
-    const getPendingPowerLink = () => {
+    const GetPendingPowerLink = () => {
         return Array.from(document.querySelectorAll("*"))
             .filter((e) => {
                 return /^(|[​\n\t ]{1,})$/.test(e.innerText) && // zero-width space (U+200B) included
@@ -92,8 +94,8 @@
     // Convert to string: String.fromCharCode TextDecoder.prototype.decode String.prototype.normalize String.fromCodePoint
     //
 
-    let powerLinkLabelCache = [];
-    const bitArrayObjs8 = [
+    let PowerLinkLabelCache = [];
+    const BitArrayObjs8 = [
         unsafeWindow.Uint8ClampedArray,
         unsafeWindow.Int8Array,
         unsafeWindow.Uint8Array
@@ -103,25 +105,25 @@
         unsafeWindow.EventTarget.prototype.addEventListener,
         {
             apply: (target, thisArg, argsList) => {
-                if (/^\/w\//.test(location.pathname) && argsList[0] === "click" && getBoxRate(thisArg) > 2) {
-                    // powerLinkLabelCache Label
-                    powerLinkLabelCache.push(thisArg);
+                if (/^\/w\//.test(location.pathname) && argsList[0] === "click" && GetBoxRate(thisArg) > 2) {
+                    // PowerLinkLabelCache Label
+                    PowerLinkLabelCache.push(thisArg);
                 } else if (argsList[0] === "click" && /^.{1,}$/.test(thisArg.innerText)) {
-                    // powerLinkLabelCache Content
-                    for (const o of powerLinkLabelCache) {
+                    // PowerLinkLabelCache Content
+                    for (const o of PowerLinkLabelCache) {
                         if (
-                            hideElements(
-                                getElementParents(o).filter((e) => {
-                                    return getBoxRate(e) > 1 &&
+                            HideElementsImportant(
+                                Gen.Parents(o).filter((e) => {
+                                    return GetBoxRate(e) > 1 &&
                                         getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 &&
                                         e.innerText === "" &&
-                                        getElementChildren(e).includes(o);
+                                        Gen.Children(e).includes(o);
                                 })
                             )
                             > 0
                         ) {
-                            console.debug("NamuLink: EventTarget.prototype.addEventListener handler: ", powerLinkLabelCache);
-                            powerLinkLabelCache = [];
+                            console.debug("NamuLink: EventTarget.prototype.addEventListener handler: ", PowerLinkLabelCache);
+                            PowerLinkLabelCache = [];
                             break;
                         }
                     }
@@ -134,13 +136,13 @@
 
     const textDecoder = new TextDecoder();
 
-    for (let Obj of bitArrayObjs8) {
+    for (let Obj of BitArrayObjs8) {
         const proxyHandler = (target, thisArg, argsList) => {
             const Original = Reflect.apply(target, thisArg, argsList);
 
             if (textDecoder.decode(Original) instanceof ReferenceError || textDecoder.decode(Obj.of(Original).reverse()) instanceof ReferenceError) {
                 console.debug(`NamuLink: ${Obj.name} proxyHandler: `, Original);
-                hideElements(getPendingPowerLink());
+                HideElementsImportant(GetPendingPowerLink());
 
                 return crypto.getRandomValues(new Obj(Original.byteLength));
             }
@@ -174,7 +176,7 @@
     )
 
     document.addEventListener("DOMContentLoaded", () => {
-        hideAdver();
-        hideJSONPowerLink();
+        HideArcaliveAdver();
+        HideJSONPowerLink();
     })
 })();
