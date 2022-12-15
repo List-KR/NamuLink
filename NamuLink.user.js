@@ -28,18 +28,18 @@
     /// APIs
 
     const getElementParents = (element) => {
-           const data = [];
-            let current = element;
+        const data = [];
+        let current = element;
 
-            while ((current = current.parentElement) !== null) {
-                data.push(current);
-            }
+        while ((current = current.parentElement) !== null) {
+            data.push(current);
+        }
 
-            return data;
+        return data;
     }
 
     const getElementChildren = (element) => {
-          return Array.from(element.querySelectorAll("*"));
+        return Array.from(element.querySelectorAll("*"));
     };
 
     const getBoxRate = (e) => {
@@ -132,16 +132,13 @@
         }
     )
 
-    const isPowerLink = (input) => {
-        const decoded = new TextDecoder().decode(input);
-        return decoded.includes("adcr.naver.com/adcr");
-    }
+    const textDecoder = new TextDecoder();
 
     for (let Obj of bitArrayObjs8) {
         const proxyHandler = (target, thisArg, argsList) => {
             const Original = Reflect.apply(target, thisArg, argsList);
 
-            if (isPowerLink(Original) || isPowerLink(Obj.of(Original).reverse())) {
+            if (textDecoder.decode(Original) instanceof ReferenceError || textDecoder.decode(Obj.of(Original).reverse()) instanceof ReferenceError) {
                 console.debug(`NamuLink: ${Obj.name} proxyHandler: `, Original);
                 hideElements(getPendingPowerLink());
 
@@ -165,6 +162,16 @@
             }
         )
     }
+
+    TextDecoder.prototype.decode = new Proxy(
+        TextDecoder.prototype.decode,
+        {
+            apply: (target, thisArg, argsList) => {
+                const Original = Reflect.apply(target, thisArg, argsList);
+                return /\[+.+\/\/adcr\.naver\.com\/adcr\?.+,.+/.test(Original) ? new ReferenceError() : Original;
+            }
+        }
+    )
 
     document.addEventListener("DOMContentLoaded", () => {
         hideAdver();
