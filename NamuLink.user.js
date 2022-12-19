@@ -23,7 +23,7 @@
 (() => {
     "use strict";
 
-    unsafeWindow ??= window;
+    const win = typeof unsafeWindow !== "undefined" ? unsafeWindow : window
 
     /// APIs
 
@@ -96,13 +96,13 @@
 
     let PowerLinkLabelCache = [];
     const BitArrayObjs8 = [
-        unsafeWindow.Uint8ClampedArray,
-        unsafeWindow.Int8Array,
-        unsafeWindow.Uint8Array
+        win.Uint8ClampedArray,
+        win.Int8Array,
+        win.Uint8Array
     ];
 
-    unsafeWindow.EventTarget.prototype.addEventListener = new Proxy(
-        unsafeWindow.EventTarget.prototype.addEventListener,
+    win.EventTarget.prototype.addEventListener = new Proxy(
+        win.EventTarget.prototype.addEventListener,
         {
             apply: (target, thisArg, argsList) => {
                 if (/^\/w\//.test(location.pathname) && argsList[0] === "click" && GetBoxRate(thisArg) > 2) {
