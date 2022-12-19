@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      1.6.3
+// @version      2.0.0
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -21,174 +21,162 @@
 // ==/UserScript==
 
 (() => {
-	'use strict'
+    "use strict";
 
-	/// APIs
+    unsafeWindow ??= window;
 
-	const win = typeof unsafeWindow !== "undefined" ? unsafeWindow : window
+    /// APIs
 
-	const Gen =
-	{
-		Parents: (element) =>
-		{
-			var data = [element]
-			while (data[0].parentElement !== null)
-			{
-				data = [data[0].parentElement].concat(data)
-			}
-			return data.filter((FilterElement) => { return FilterElement !== element })
-		},
-		Children: (element) =>
-		{
-			return Array.from(element.querySelectorAll("*"))
-		},
-		Peers: (element) =>
-		{
-			return Array.from(element.parentElement.children).filter((FElement) => { return FElement !== element })
-		}
-	}
 
-	const GetBoxRate = (e) =>
-	{
-		return e.offsetWidth / e.offsetHeight
-	}
+    const Gen = {
+        Parents: (element) => {
+            const data = [];
+            let current = element;
 
-	const HideElementsImportant = (e) =>
-	{
-		let target = e.filter((k) => k !== undefined)
-		if (target.length === 0) return 0
-		setInterval((k) =>
-		{
-			Array.from(k).forEach((o) => { o.style.setProperty("display", "none", "important") })
-		}, 50, target)
-		console.debug("NamuLink: HideElementsImportant: ", target)
-		return target.length
-	}
+            while ((current = current.parentElement) !== null) {
+                data.push(current);
+            }
 
-	const HideArcaliveAdver = () =>
-	{
-		Array.from(document.querySelectorAll("iframe[src]")).filter((e) => { return /\/\/arca\.live\/external\/callad/.test(e.getAttribute("src")) })
-		.forEach((e) => { HideElementsImportant(Gen.Parents(e).filter((o) => { return o.innerText === "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15 }))})
-	}
+            return data;
+        },
+        Children: (element) => {
+            return Array.from(element.querySelectorAll("*"));
+        }
+    }
 
-	const HideJSONPowerLink = () =>
-	{
-		HideElementsImportant(Array.from(document.querySelectorAll("iframe[src*='//arca.live/static/ad/powerlink.html?size=']")).filter((e) => { return e.offsetHeight > 100 && e.offsetWidth > 100 }))
-	}
+    const GetBoxRate = (e) => {
+        return e.offsetWidth / e.offsetHeight;
+    }
 
-	const GetPendingPowerLink = () =>
-	{
-		return Array.from(document.querySelectorAll("*"))
-			.filter((e) => { return /^(|[​\n\t ]{1,})$/.test(e.innerText) && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 // zero-width space (U+200B) included
-			&& Array.from(document.querySelectorAll("*"))
-			.filter((k) => { return getComputedStyle(k).getPropertyValue("animation-iteration-count") === "infinite" })
-			.every((k) => { return e.contains(k) }) })
-	}
+    const HideElementsImportant = (e) => {
+        if (e.length === 0) return 0;
 
-	/// Main
-	// Convert to string: String.fromCharCode TextDecoder.prototype.decode String.prototype.normalize String.fromCodePoint
-	// 
+        for (const element of e) {
+            element.style.setProperty("display", "none", "important");
+        }
 
-	var PowerLinkLabelCache = []
-	const BitArrayObjs8 = [Uint8ClampedArray, Int8Array, Uint8Array]
+        console.debug("NamuLink: HideElementsImportant: ", e);
+        return e.length;
+    }
 
-	EventTarget.prototype.addEventListener = new Proxy(
-		EventTarget.prototype.addEventListener,
-		{
-			apply: (target, thisArg, argsList) =>
-			{
-				if (/^https:\/\/namu\.wiki\/w\//.test(location.href) && argsList[0] === "click" && GetBoxRate(thisArg) > 2) // PowerLinkLabelCache Label
-				{
-					PowerLinkLabelCache.push(thisArg)
-				}
-				else if (argsList[0] === "click" && /^.{1,}$/.test(thisArg.innerText)) // PowerLinkLabelCache Content
-				{
-					for (var o of PowerLinkLabelCache)
-					{
-						if (HideElementsImportant(Gen.Parents(o).filter((e) => { return GetBoxRate(e) > 1 && getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 })
-						.filter((e) => { return e.innerText === "" && Gen.Children(e).includes(o) }))
-						> 0)
-						{
-							console.debug("NamuLink: EventTarget.prototype.addEventListener handler: ", PowerLinkLabelCache)
-							PowerLinkLabelCache = []
-							break
-						}
-					}
-				}
-				Reflect.apply(target, thisArg, argsList)
-			}
-		}
-	)
+    const HideArcaliveAdver = () => {
+        for (const element of document.querySelectorAll(`iframe[src*="//arca.live/external/callad"]`)) {
+            HideElementsImportant(
+                Gen.Parents(element).filter((o) => {
+                    return o.innerText === "" && getComputedStyle(o).getPropertyValue("padding-bottom").replace(/px$/, "") > 15
+                })
+            )
+        }
+    }
 
-	for (var Obj of BitArrayObjs8)
-	{
-		Obj.prototype.slice = new Proxy(
-			Obj.prototype.slice,
-			{
-				apply: (target, thisArg, argsList) =>
-				{
-					var Original = Reflect.apply(target, thisArg, argsList)
-					if (new TextDecoder().decode(Original) instanceof ReferenceError
-					|| new TextDecoder().decode(Obj.of(Original).reverse()) instanceof ReferenceError)
-					{
-						console.debug("NamuLink: " + Obj.name + ".prototype.slice handler: ", Original)
-						HideElementsImportant(GetPendingPowerLink())
-						return crypto.getRandomValues(new Obj(Original.byteLength))
-					}
-					else
-					{
-						return Original
-					}
-				}
-			}
-		)
-	}
+    const HideJSONPowerLink = () => {
+        HideElementsImportant(
+            Array.from(document.querySelectorAll("iframe[src*='//arca.live/static/ad/powerlink.html?size=']")).filter((e) => {
+                return e.offsetHeight > 100 && e.offsetWidth > 100;
+            })
+        );
+    }
 
-	for (var Obj of BitArrayObjs8)
-	{
-		Obj.from = new Proxy(
-			Obj.from,
-			{
-				apply: (target, thisArg, argsList) =>
-				{
-					var Original = Reflect.apply(target, thisArg, argsList)
-					if (new TextDecoder().decode(Original) instanceof ReferenceError
-					|| new TextDecoder().decode(Obj.of(Original).reverse()) instanceof ReferenceError)
-					{
-						console.debug("NamuLink: " + Obj.name + ".from handler: ", Original)
-						HideElementsImportant(GetPendingPowerLink())
-						return crypto.getRandomValues(new Obj(Original.byteLength))
-					}
-					else
-					{
-						return Original
-					}
-				}
-			}
-		)
-	}
+    const GetPendingPowerLink = () => {
+        return Array.from(document.body.querySelectorAll("*"))
+            .filter((e) => {
+                return /^(|[​\n\t ]{1,})$/.test(e.innerText) && // zero-width space (U+200B) included
+                    getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 &&
+                    Array.from(e.children).filter((e) => {
+                        return Array.from(e.querySelectorAll("*")).filter((e2) => {
+                            return getComputedStyle(e2).getPropertyValue("animation-iteration-count") === "infinite";
+                        });
+                    }).length > 0
+            });
+    };
 
-	TextDecoder.prototype.decode = new Proxy(
-		TextDecoder.prototype.decode,
-		{
-			apply: (target, thisArg, argsList) =>
-			{
-				var Original = Reflect.apply(target, thisArg, argsList)
-				if (/\[+.+\/\/adcr\.naver\.com\/adcr\?.+,.+/.test(Original.toString()))
-				{
-					return new ReferenceError()
-				}
-				else
-				{
-					return Original
-				}
-			}
-		}
-	)
+    /// Main
+    // Convert to string: String.fromCharCode TextDecoder.prototype.decode String.prototype.normalize String.fromCodePoint
+    //
 
-	document.addEventListener("DOMContentLoaded", () =>
-	{
-		HideArcaliveAdver()
-		HideJSONPowerLink()
-	})
-})()
+    let PowerLinkLabelCache = [];
+    const BitArrayObjs8 = [
+        unsafeWindow.Uint8ClampedArray,
+        unsafeWindow.Int8Array,
+        unsafeWindow.Uint8Array
+    ];
+
+    unsafeWindow.EventTarget.prototype.addEventListener = new Proxy(
+        unsafeWindow.EventTarget.prototype.addEventListener,
+        {
+            apply: (target, thisArg, argsList) => {
+                if (/^\/w\//.test(location.pathname) && argsList[0] === "click" && GetBoxRate(thisArg) > 2) {
+                    // PowerLinkLabelCache Label
+                    PowerLinkLabelCache.push(thisArg);
+                } else if (argsList[0] === "click" && /^.{1,}$/.test(thisArg.innerText)) {
+                    // PowerLinkLabelCache Content
+                    for (const o of PowerLinkLabelCache) {
+                        if (
+                            HideElementsImportant(
+                                Gen.Parents(o).filter((e) => {
+                                    return GetBoxRate(e) > 1 &&
+                                        getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 &&
+                                        e.innerText === "" &&
+                                        Gen.Children(e).includes(o);
+                                })
+                            )
+                            > 0
+                        ) {
+                            console.debug("NamuLink: EventTarget.prototype.addEventListener handler: ", PowerLinkLabelCache);
+                            PowerLinkLabelCache = [];
+                            break;
+                        }
+                    }
+                }
+
+                Reflect.apply(target, thisArg, argsList);
+            }
+        }
+    )
+
+    const textDecoder = new TextDecoder();
+
+    for (let Obj of BitArrayObjs8) {
+        const proxyHandler = (target, thisArg, argsList) => {
+            const Original = Reflect.apply(target, thisArg, argsList);
+
+            if (textDecoder.decode(Original) instanceof ReferenceError || textDecoder.decode(Obj.of(Original).reverse()) instanceof ReferenceError) {
+                console.debug(`NamuLink: ${Obj.name} proxyHandler: `, Original);
+                HideElementsImportant(GetPendingPowerLink());
+
+                return crypto.getRandomValues(new Obj(Original.byteLength));
+            }
+
+            return Original;
+        };
+
+        Obj.prototype.slice = new Proxy(
+            Obj.prototype.slice,
+            {
+                apply: proxyHandler
+            }
+        )
+
+        Obj.from = new Proxy(
+            Obj.from,
+            {
+                apply: proxyHandler
+            }
+        )
+    }
+
+    TextDecoder.prototype.decode = new Proxy(
+        TextDecoder.prototype.decode,
+        {
+            apply: (target, thisArg, argsList) => {
+                const Original = Reflect.apply(target, thisArg, argsList);
+                return /\[+.+\/\/adcr\.naver\.com\/adcr\?.+,.+/.test(Original) ? new ReferenceError() : Original;
+            }
+        }
+    )
+
+    document.addEventListener("DOMContentLoaded", () => {
+        HideArcaliveAdver();
+        HideJSONPowerLink();
+    })
+})();
