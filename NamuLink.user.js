@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      2.0.1
+// @version      2.0.2
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -86,7 +86,8 @@
                         return Array.from(e.querySelectorAll("*")).filter((e2) => {
                             return getComputedStyle(e2).getPropertyValue("animation-iteration-count") === "infinite";
                         });
-                    }).length > 0
+                    }).length > 0 &&
+                    Array.from(e.parentElement.children).length > 1
             });
     };
 
