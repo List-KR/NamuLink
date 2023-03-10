@@ -1,4 +1,7 @@
 ## NamuLink
+
+[![jsDelivr Stats](https://data.jsdelivr.com/v1/package/gh/List-KR/List-KR/badge)](https://www.jsdelivr.com/package/gh/List-KR/List-KR)
+
 NamuLink는 나무위키에 있는 파워링크 광고를 차단합니다.
 
 ### 빠른 시작

@@ -1,4 +1,7 @@
 ## NamuLink
+
+[![jsDelivr Stats](https://data.jsdelivr.com/v1/package/gh/List-KR/List-KR/badge)](https://www.jsdelivr.com/package/gh/List-KR/List-KR)
+
 NamuLink blocks PowerLink advertisement on NamuWiki.
 
 <details>
