@@ -117,7 +117,7 @@
                                 Gen.Parents(o).filter((e) => {
                                     return GetBoxRate(e) > 1 &&
                                         getComputedStyle(e).getPropertyValue("margin-top").replace(/px$/, "") > 20 &&
-                                        e.innerText === "" &&
+                                        /^(|[​\n\t ]{1,})$/.test(e.innerText) &&
                                         Gen.Children(e).includes(o);
                                 })
                             )
