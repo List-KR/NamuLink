@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      2.0.2
+// @version      2.0.3
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
