@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "dependencies": {
+    "userscript-composer": "^0.0.7"
+  }
+}
