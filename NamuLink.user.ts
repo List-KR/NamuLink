@@ -68,4 +68,30 @@ declare const unsafeWindow: unsafeWindow
   function Children (element: HTMLElement) {
     return Array.from(element.querySelectorAll('*'))
   }
+
+  // The following proxy handles initial loading PowerLink advertisement when visiting NamuWiki document in a web browser tab.
+  let PowerLinkLabelCache: Array<HTMLElement> = []
+  win.EventTarget.prototype.addEventListener = new Proxy(
+    win.EventTarget.prototype.addEventListener, {
+      apply: function (target, thisArg: HTMLElement, argumentsList) {
+        if (/^\/w\//.test(location.pathname) && argumentsList[0] === 'click' && (thisArg.offsetWidth / thisArg.offsetHeight) > 2) {
+          PowerLinkLabelCache.push(thisArg)
+        } else if (argumentsList[0] === 'click' && /^.+$/.test(thisArg.innerText)) {
+          for (let Label of PowerLinkLabelCache) {
+            if (
+              HideElementsImportant(Parents(Label).filter(function(LabelParent) {
+                return (LabelParent.offsetWidth / LabelParent.offsetHeight) > 1 && parseInt(getComputedStyle(LabelParent).getPropertyValue('margin-top').replace(/px$/, '')) > 20
+                && /^(|[​\n\t ]+)$/.test(LabelParent.innerText) && Children(LabelParent).includes(Label)
+              }))
+            ) {
+              NamuLinkDebug(PowerLinkLabelCache)
+              PowerLinkLabelCache = []
+              break
+            }
+          }
+        }
+        Reflect.apply(target, thisArg, argumentsList)
+      }
+    }
+  )
 })();
