@@ -20,3 +20,10 @@
 // @run-at       document-start
 // @inject-into  page
 // ==/UserScript==
+
+type unsafeWindow = typeof window
+declare const unsafeWindow: unsafeWindow
+
+(function () {
+  
+})();
