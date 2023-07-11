@@ -3,7 +3,7 @@
     "module": "ES2022",
     "target": "ES2022",
     "moduleResolution": "node",
-    "removeComments": true,
+    "removeComments": false,
     "alwaysStrict": true,
     "skipLibCheck": true
   }
