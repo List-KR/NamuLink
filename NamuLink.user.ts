@@ -66,7 +66,7 @@ declare const unsafeWindow: unsafeWindow
    * @param element The element to get children of.
    */
   function Children (element: HTMLElement) {
-    return Array.from(element.querySelectorAll('*'))
+    return Array.from(element.querySelectorAll('*')).filter(function (AllElement) { return AllElement instanceof HTMLElement }) as Array<HTMLElement>
   }
 
   // The following proxy handles initial loading PowerLink advertisement when visiting NamuWiki document in a web browser tab.
