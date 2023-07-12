@@ -4,7 +4,7 @@
     "target": "ES2022",
     "moduleResolution": "node",
     "removeComments": false,
-    "alwaysStrict": true,
+    "alwaysStrict": false,
     "skipLibCheck": true
   }
 }
