@@ -94,4 +94,38 @@ declare const unsafeWindow: unsafeWindow
       }
     }
   )
+
+  // The following proxy handles PowerLink advertisement that is loaded after the initial loading.
+  for (let BitArrayObj of [Uint8ClampedArray, Int8Array, Uint8Array]) {
+    // Prepare function for Uint8ClampedArray, Int8Array and Uint8Array.
+    function BitArrayProxy (target, thisArg, argumentsList) {
+      let OriginalValue:Uint16Array | Int8Array | Uint8Array = Reflect.apply(target, thisArg, argumentsList)
+      if (typeof new TextDecoder().decode(OriginalValue) !== 'string') {
+        NamuLinkDebug(OriginalValue)
+        HideElementsImportant(
+          Array.from(document.body.querySelectorAll("*")).filter(function(AllElement) {
+            return AllElement instanceof HTMLElement && /^(|[​\n\t ]{1,})$/.test(AllElement.innerText) &&
+            parseInt(getComputedStyle(AllElement).getPropertyValue('margin-top').replace(/px$/, '')) > 20 &&
+            Array.from(AllElement.children).filter(function(Children) { 
+              return Array.from(Children.querySelectorAll('*')).filter(function(ChildrenAll) {
+                return getComputedStyle(ChildrenAll).getPropertyValue('animation-iteration-count') === 'infinite'
+              })
+             }).length > 0 && Array.from(AllElement.parentElement.children).length > 1
+          }) as Array<HTMLElement>
+        )
+        return crypto.getRandomValues(new BitArrayObj(OriginalValue.length))
+      }
+      return OriginalValue
+    }
+    // Modify original prototype function.
+    BitArrayObj.prototype.slice = new Proxy(BitArrayObj.prototype.slice, { apply: BitArrayProxy })
+    BitArrayObj.from = new Proxy(BitArrayObj.from, { apply: BitArrayProxy })
+  }
+  // Override TextDecoder.prototype.decode to detect PowerLink advertisement.
+  TextDecoder.prototype.decode = new Proxy(TextDecoder.prototype.decode, {
+    apply: function (target, thisArg, argumentsList) {
+      let OriginalValue = Reflect.apply(target, thisArg, argumentsList)
+      return /\[+.+\/\/adcr\.naver\.com\/adcr\?.+,.+/.test(OriginalValue) ? new ReferenceError() : OriginalValue
+    }
+  })
 })();
