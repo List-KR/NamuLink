@@ -128,4 +128,16 @@ declare const unsafeWindow: unsafeWindow
       return /\[+.+\/\/adcr\.naver\.com\/adcr\?.+,.+/.test(OriginalValue) ? new ReferenceError() : OriginalValue
     }
   })
+
+  // Hide other leftovers.
+  document.addEventListener('DOMContentLoaded', function() {
+    for (let element of Array.from(document.querySelectorAll('iframe[src*="//arca.live/external/callad"]')).filter(function (AllElement) { return AllElement instanceof HTMLElement }) as Array<HTMLElement>) {
+      HideElementsImportant(Parents(element).filter(function (ParentsElement) {
+        return ParentsElement.innerText === '' &&
+        parseInt(getComputedStyle(ParentsElement).getPropertyValue('padding-bottom').replace(/px$/, '')) > 15
+      }))
+    }
+    let ArcaLivePowerLink = Array.from(document.querySelectorAll('iframe[src*="//arca.live/static/ad/powerlink.html?size="]')).filter(function (AllElement) { return AllElement instanceof HTMLElement }) as Array<HTMLElement>
+    HideElementsImportant(ArcaLivePowerLink.filter(function(AllElement) { return AllElement.offsetHeight > 100 && AllElement.offsetWidth > 100 }))
+  })
 })();
