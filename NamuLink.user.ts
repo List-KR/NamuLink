@@ -31,7 +31,7 @@ declare const unsafeWindow: unsafeWindow
    * @param message The message to leave.
    */
   function NamuLinkDebug(message: any): void {
-    console.debug(`NamuLink: ${new Error().stack.split('\n')[1].trim()}: ${message}`)
+    console.debug(`NamuLink: ${new Error().stack.split('\n')[1].trim()}:`, message)
   }
 
   /**
