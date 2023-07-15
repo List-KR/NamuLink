@@ -24,6 +24,7 @@ on:
 
 jobs:
   analyze:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: Analyze with CodeQL
     runs-on: ubuntu-latest
     permissions:
@@ -73,14 +74,35 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
 
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [analyze]
+    if: ${{ always() && needs.analyze.result == 'success' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Compile Typescript with tsc
+        run: |
+          tsc
+      - name: Push changes
+        run: |
+          if [[ -n $(git diff) ]]; then
+            git config --local user.email "<>"
+            git config --local user.name "github-actions[bot]"
+            git add .
+            git commit -m "skip ci. Update compiled files"
+            git push
+          fi
+
   jsdelivrpurge:
     name: Purge jsDelivr cache
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
-    needs: analyze
-    if: ${{ always() && github.event_name == 'push' && github.ref_name == 'main' && needs.analyze.result == 'success' }}
+    needs: [analyze, build]
+    if: ${{ always() && github.event_name == 'push' && github.ref_name == 'main' && needs.analyze.result == 'success' && needs.build.result == 'success' }}
     steps:
       - name: Run jsDelivr-Purge
         uses: List-KR/jsdelivr-purge@v4
