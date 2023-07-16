@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      2.1.0
+// @version      2.1.1
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -31,7 +31,8 @@ declare const unsafeWindow: unsafeWindow
    * @param message The message to leave.
    */
   function NamuLinkDebug(message: any): void {
-    console.debug(`NamuLink: ${new Error().stack.split('\n')[1].trim()}:`, message)
+    let StackTrace = new Error().stack
+    console.debug(`NamuLink: ${StackTrace.split('\n')[1].trim()} ${StackTrace.split('\n')[2].trim()}:`, message)
   }
 
   /**
