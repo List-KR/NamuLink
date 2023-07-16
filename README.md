@@ -102,7 +102,7 @@ https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
     3. iOS 설정 -> Safari -> 확장 프로그램 -> Userscripts를 켜주세요.
     4. iOS 설정 -> Safari -> 확장 프로그램 -> Userscripts -> 모든 웹 사이트에 대해 허용으로 바꿔주세요.
     5. 아래 URL를 Safari로 열어주세요.
-            ```
+        ```
         https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
         ```
     6. Safari의 주소 막대에서 확장 프로그램 아이콘을 누르고 Userscripts 앱을 엽니다.
