@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      2.1.2
+// @version      2.1.3
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -148,7 +148,7 @@ declare const unsafeWindow: unsafeWindow
   if ((navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) && typeof performance.eventCounts === 'undefined') {
     NamuLinkDebug('Apple iOS Safari detected.')
     try {
-      let DivTableElements = Array.from(document.querySelectorAll('div')) as Array<HTMLElement>
+      let DivTableElements = Array.from(document.querySelectorAll('div,table')) as Array<HTMLElement>
       let PowerLinkContainers: Array<HTMLElement> = DivTableElements.filter(function(element) {
         return 1.5 < (element.offsetWidth / element.offsetHeight) && 2.5 > (element.offsetWidth / element.offsetHeight) &&
         parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 15
