@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      2.1.1
+// @version      2.1.2
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -141,4 +141,21 @@ declare const unsafeWindow: unsafeWindow
     let ArcaLivePowerLink = Array.from(document.querySelectorAll('iframe[src*="//arca.live/static/ad/powerlink.html?size="]')).filter(function (AllElement) { return AllElement instanceof HTMLElement }) as Array<HTMLElement>
     HideElementsImportant(ArcaLivePowerLink.filter(function(AllElement) { return AllElement.offsetHeight > 100 && AllElement.offsetWidth > 100 }))
   })
+
+  // Hide PowerLink advertisement that is loaded after the initial loading for only quoid/userscripts on Apple iOS Safari.
+  // https://developer.mozilla.org/en-US/doc/Web/API/Performance/eventCounts
+  // https://github.com/List-KR/NamuLink/issues/14
+  if ((navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) && typeof performance.eventCounts === 'undefined') {
+    NamuLinkDebug('Apple iOS Safari detected.')
+    try {
+      let DivTableElements = Array.from(document.querySelectorAll('div')) as Array<HTMLElement>
+      let PowerLinkContainers: Array<HTMLElement> = DivTableElements.filter(function(element) {
+        return 1.5 < (element.offsetWidth / element.offsetHeight) && 2.5 > (element.offsetWidth / element.offsetHeight) &&
+        parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 15
+      })
+      HideElementsImportant(PowerLinkContainers)
+    } catch {
+      NamuLinkDebug('An error occurred.')
+    }
+  }
 })();
