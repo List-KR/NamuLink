@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      2.1.4
+// @version      2.1.5
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -85,7 +85,7 @@ declare const unsafeWindow: unsafeWindow
               return Array.from(Children.querySelectorAll('*')).filter(function(ChildrenAll) {
                 return getComputedStyle(ChildrenAll).getPropertyValue('animation-iteration-count') === 'infinite'
               })
-             }).length > 0 && Array.from(AllElement.parentElement.children).length > 1
+             }).length > 0
           }) as Array<HTMLElement>
         )
         return crypto.getRandomValues(new BitArrayObj(OriginalValue.length))
