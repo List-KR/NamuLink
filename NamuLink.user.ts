@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      2.1.5
+// @version      2.1.6
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -133,16 +133,18 @@ declare const unsafeWindow: unsafeWindow
     }
   } else {
     document.addEventListener('DOMContentLoaded', function() {
-      NamuLinkDebug('DOMContentLoaded event detected.')
-      try {
-        let DivTableElements = Array.from(document.querySelectorAll('div,table')) as Array<HTMLElement>
-        let PowerLinkContainers: Array<HTMLElement> = DivTableElements.filter(function(element) {
-          return 1.5 < (element.offsetWidth / element.offsetHeight) &&
-          parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 25
-        })
-        HideElementsImportant(PowerLinkContainers)
-      } catch (error) {
-        NamuLinkDebug(error)
+      if (document.querySelector('script[src^="/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/"]') === null && document.querySelector('a[href="/"]') !== null) {
+        NamuLinkDebug('DOMContentLoaded event detected.')
+        try {
+          let DivTableElements = Array.from(document.querySelectorAll('div,table')) as Array<HTMLElement>
+          let PowerLinkContainers: Array<HTMLElement> = DivTableElements.filter(function(element) {
+            return 1.5 < (element.offsetWidth / element.offsetHeight) &&
+            parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 25
+          })
+          HideElementsImportant(PowerLinkContainers)
+        } catch (error) {
+          NamuLinkDebug(error)
+        }
       }
     })
   }
