@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@main/NamuLink.user.js
 // @license      MIT
 //
-// @version      2.1.6
+// @version      2.1.7
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -81,6 +81,7 @@ declare const unsafeWindow: unsafeWindow
           Array.from(document.body.querySelectorAll("*")).filter(function(AllElement) {
             return AllElement instanceof HTMLElement && /^(|[​\n\t ]{1,})$/.test(AllElement.innerText) &&
             parseInt(getComputedStyle(AllElement).getPropertyValue('margin-top').replace(/px$/, '')) > 20 &&
+            !(Children(AllElement).some(function (Child) { return (Child.getAttribute('loading') ?? '') === 'lazy' || /^jump\//.test(Child.getAttribute('data-doc') ?? '') })) &&
             Array.from(AllElement.children).filter(function(Children) { 
               return Array.from(Children.querySelectorAll('*')).filter(function(ChildrenAll) {
                 return getComputedStyle(ChildrenAll).getPropertyValue('animation-iteration-count') === 'infinite'
@@ -125,7 +126,8 @@ declare const unsafeWindow: unsafeWindow
       let DivTableElements = Array.from(document.querySelectorAll('div,table')) as Array<HTMLElement>
       let PowerLinkContainers: Array<HTMLElement> = DivTableElements.filter(function(element) {
         return 1.5 < (element.offsetWidth / element.offsetHeight) && 2.5 > (element.offsetWidth / element.offsetHeight) &&
-        parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 15
+        parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 15 &&
+        !(Children(element).some(function (Child) { return (Child.getAttribute('loading') ?? '') === 'lazy' || /^jump\//.test(Child.getAttribute('data-doc') ?? '') }))
       })
       HideElementsImportant(PowerLinkContainers)
     } catch (error) {
@@ -139,7 +141,8 @@ declare const unsafeWindow: unsafeWindow
           let DivTableElements = Array.from(document.querySelectorAll('div,table')) as Array<HTMLElement>
           let PowerLinkContainers: Array<HTMLElement> = DivTableElements.filter(function(element) {
             return 1.5 < (element.offsetWidth / element.offsetHeight) &&
-            parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 25
+            parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 25 &&
+            !(Children(element).some(function (Child) { return (Child.getAttribute('loading') ?? '') === 'lazy' || /^jump\//.test(Child.getAttribute('data-doc') ?? '') }))
           })
           HideElementsImportant(PowerLinkContainers)
         } catch (error) {
