@@ -8,7 +8,7 @@
 // @downloadURL  https://cdn.jsdelivr.net/gh/List-KR/NamuLink@latest/NamuLink.user.js
 // @license      MIT
 //
-// @version      2.1.8
+// @version      2.1.9
 // @author       PiQuark6046 and contributors
 //
 // @match        https://namu.wiki/*
@@ -71,7 +71,7 @@ declare const unsafeWindow: unsafeWindow
   }
 
   // The following proxy handles PowerLink advertisement that is loaded after the initial loading.
-  for (let BitArrayObj of [Uint8ClampedArray, Int8Array, Uint8Array]) {
+  for (let BitArrayObj of [win.Uint8ClampedArray, win.Int8Array, win.Uint8Array]) {
     // Prepare function for Uint8ClampedArray, Int8Array and Uint8Array.
     function BitArrayProxy (target, thisArg, argumentsList) {
       let OriginalValue:Uint16Array | Int8Array | Uint8Array = Reflect.apply(target, thisArg, argumentsList)
@@ -125,9 +125,10 @@ declare const unsafeWindow: unsafeWindow
     try {
       let DivTableElements = Array.from(document.querySelectorAll('div,table')) as Array<HTMLElement>
       let PowerLinkContainers: Array<HTMLElement> = DivTableElements.filter(function(element) {
-        return 1.5 < (element.offsetWidth / element.offsetHeight) && 2.5 > (element.offsetWidth / element.offsetHeight) &&
-        parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 15 &&
-        !(Children(element).some(function (Child) { return (Child.getAttribute('loading') ?? '') === 'lazy' || /^jump\//.test(Child.getAttribute('data-doc') ?? '') }))
+        return parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 15 &&
+        Children(element).some(function (Child) { return (decodeURIComponent(Child.getAttribute('href') ?? '')).startsWith(`/w/${Child.getAttribute('title') ?? ''}`) || (decodeURIComponent(Child.getAttribute('href') ?? '')).startsWith(`/w/사용자:${Child.getAttribute('title') ?? ''}`)}) &&
+        !(Children(element).some(function (Child) { return (Child.getAttribute('loading') ?? '') === 'lazy' || /^jump\//.test(Child.getAttribute('data-doc') ?? '') })) &&
+        !(Children(element).some(function (Child) { return (Child.getAttribute('href') ?? '').startsWith('#rfn-') }))
       })
       HideElementsImportant(PowerLinkContainers)
     } catch (error) {
@@ -140,9 +141,10 @@ declare const unsafeWindow: unsafeWindow
         try {
           let DivTableElements = Array.from(document.querySelectorAll('div,table')) as Array<HTMLElement>
           let PowerLinkContainers: Array<HTMLElement> = DivTableElements.filter(function(element) {
-            return 1.5 < (element.offsetWidth / element.offsetHeight) &&
-            parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 25 &&
-            !(Children(element).some(function (Child) { return (Child.getAttribute('loading') ?? '') === 'lazy' || /^jump\//.test(Child.getAttribute('data-doc') ?? '') }))
+            return parseInt(getComputedStyle(element).getPropertyValue('margin-top').replace(/px$/, '')) > 25 &&
+            Children(element).some(function (Child) { return (decodeURIComponent(Child.getAttribute('href') ?? '')).startsWith(`/w/${Child.getAttribute('title') ?? ''}`) || (decodeURIComponent(Child.getAttribute('href') ?? '')).startsWith(`/w/사용자:${Child.getAttribute('title') ?? ''}`)}) &&
+            !(Children(element).some(function (Child) { return (Child.getAttribute('loading') ?? '') === 'lazy' || /^jump\//.test(Child.getAttribute('data-doc') ?? '') })) &&
+            !(Children(element).some(function (Child) { return (Child.getAttribute('href') ?? '').startsWith('#rfn-') }))
           })
           HideElementsImportant(PowerLinkContainers)
         } catch (error) {
