@@ -8,26 +8,34 @@ declare const unsafeWindow: unsafeWindow
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
 const CheckEableAdsAdsMetadata = (AdsMetadata: unknown) => {
-	for (const Key of Object.keys(AdsMetadata)) {
-		if (typeof AdsMetadata[Key] === 'string' && (AdsMetadata[Key] as string).includes('adcr.naver.com')) {
+	if (Array.isArray(AdsMetadata)) {
+		if (AdsMetadata.toString().includes('//adcr.naver.com/adcr?')) {
 			return true
+		}
+	} else {
+		for (const Key of Object.keys(AdsMetadata)) {
+			try {
+				if (typeof AdsMetadata[Key] === 'string' && (AdsMetadata[Key] as string).includes('//adcr.naver.com/adcr?')) {
+					return true
+				}
+			} catch (error) {}
 		}
 	}
 
 	return false
 }
 
-const CheckGetAdUnitPathObject = Superstruct.object({
-	getHtml: Superstruct.func(),
-	getAdUnitPath: Superstruct.func(),
+const IsFakeNumber = (Args: string) => !Number.isNaN(Number(Args))
+
+const EableAdsAdsFlagObj = Superstruct.object({
+	enable_ads: Superstruct.define('IsFakeNumber', IsFakeNumber),
 })
 
-const IsEableAdsObject = (Args: unknown) => typeof Args[0] !== 'undefined' && typeof Args[1] !== 'undefined' && Args[1] === 'enable_ads' && CheckEableAdsAdsMetadata(Args[0])
-const IsGetAdUnitPathObject = (Args: unknown) => typeof Args[0] !== 'undefined' && typeof Args[1] !== 'undefined' && Args[1] === 'getAdUnitPath' && Superstruct.validate(Args[0], CheckGetAdUnitPathObject)
+const IsEableAdsObject = (Args: unknown) => typeof Args[0] !== 'undefined' && typeof Args[0] === 'object' && Superstruct.validate(Args, EableAdsAdsFlagObj) && CheckEableAdsAdsMetadata(Args[0])
 
 Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
 	apply(Target, ThisArg, Args) {
-		if (IsEableAdsObject(Args) || IsGetAdUnitPathObject(Args)) {
+		if (IsEableAdsObject(Args)) {
 			console.debug('[NamuLink:index]: Object.defineProperty:', [Target, ThisArg, Args])
 		} else {
 			Reflect.apply(Target, ThisArg, Args)
@@ -44,5 +52,15 @@ Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 		}
 
 		return Decoded
+	},
+})
+
+Win.Array.prototype.push = new Proxy(Win.Array.prototype.push, {
+	apply(Target, ThisArg, Args) {
+		if (Args.toString().includes('//adcr.naver.com/adcr?')) {
+			console.debug('[NamuLink:index]: Array.prototype.push:', [Target, ThisArg, Args])
+		} else {
+			Reflect.apply(Target, ThisArg, Args)
+		}
 	},
 })
