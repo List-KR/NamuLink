@@ -20,3 +20,5 @@
 // @run-at       document-start
 // @inject-into  page
 // ==/UserScript==
+// Used libraries:
+// - Superstruct https://github.com/ianstormtaylor/superstruct

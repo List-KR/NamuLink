@@ -7,6 +7,9 @@ declare const unsafeWindow: unsafeWindow
 // eslint-disable-next-line no-negated-condition
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
+const NagivationEvent = new Event('namuwikinavigation')
+const FristVisitEvent = new Event('namuwikifristvisit')
+
 const CheckEableAdsAdsMetadata = (AdsMetadata: unknown) => {
 	if (Array.isArray(AdsMetadata)) {
 		if (AdsMetadata.toString().includes('//adcr.naver.com/adcr?')) {
@@ -48,6 +51,7 @@ Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 		const Decoded = Reflect.apply(Target, ThisArg, Args) as string
 		if (Decoded.includes('//adcr.naver.com/adcr?')) {
 			console.debug('[NamuLink:index]: TextDecoder.prototype.decode:', [Target, ThisArg, Args])
+			Win.dispatchEvent(NagivationEvent)
 			return new Error()
 		}
 
@@ -59,8 +63,32 @@ Win.Array.prototype.push = new Proxy(Win.Array.prototype.push, {
 	apply(Target, ThisArg, Args) {
 		if (Args.toString().includes('//adcr.naver.com/adcr?')) {
 			console.debug('[NamuLink:index]: Array.prototype.push:', [Target, ThisArg, Args])
+			Win.dispatchEvent(FristVisitEvent)
 		} else {
 			Reflect.apply(Target, ThisArg, Args)
 		}
 	},
 })
+
+const HideElements = (TargetElements: HTMLElement[]) => {
+	TargetElements.forEach(TargetElement => {
+		TargetElement.style.setProperty('display', 'none', 'important')
+	})
+}
+
+const HideLeftoverElement = () => {
+	const ElementsInArticle = Array.from(Win.document.querySelectorAll('article div[class*=" "]:has(> span + ul) ~ div * ~ div[class]'))
+	const HTMLElementsInArticle = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
+	var TargetElements: HTMLElement[] = []
+	TargetElements = HTMLElementsInArticle.filter(HTMLElementInArticle => Number(getComputedStyle(HTMLElementInArticle).getPropertyValue('margin-top').replace(/px$/, '')) > 10)
+	TargetElements = TargetElements.filter(HTMLElementInArticle => {
+		const ParentElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
+		const ParentHTMLElements = ParentElements.filter(ParentElement => ParentElement instanceof HTMLElement) as HTMLElement[]
+		return ParentHTMLElements.filter(ParentElement => getComputedStyle(ParentElement).getPropertyValue('animation-iteration-count') === 'infinite').length >= 6
+	})
+	console.debug('[NamuLink:index]: HideLeftoverElement:', TargetElements)
+	HideElements(TargetElements)
+}
+
+Win.addEventListener('namuwikinavigation', HideLeftoverElement)
+Win.addEventListener('namuwikifristvisit', HideLeftoverElement)
