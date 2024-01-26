@@ -81,7 +81,8 @@ const HideLeftoverElement = () => {
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1) ~ *')))
 	const HTMLElementsInArticle = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
 	var TargetElements: HTMLElement[] = []
-	TargetElements = HTMLElementsInArticle.filter(HTMLElementInArticle => {
+	TargetElements = HTMLElementsInArticle.filter(HTMLElementInArticle => /^.+$/.test(HTMLElementInArticle.innerText))
+	TargetElements = TargetElements.filter(HTMLElementInArticle => {
 		const ParentElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
 		const ParentHTMLElements = ParentElements.filter(ParentElement => ParentElement instanceof HTMLElement) as HTMLElement[]
 		return ParentHTMLElements.some(ParentElement => Number(getComputedStyle(ParentElement).getPropertyValue('margin-bottom').replace(/px$/, '')) >= 4)
