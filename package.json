@@ -1,3 +1,41 @@
 {
-  "type": "module"
+  "name": "namulink",
+  "version": "3.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm bundle",
+    "bundle": "esbuild sources/src/index.ts --bundle --minify --define:global=window --inject:./sources/esbuild.inject.ts --banner:js=\"$(cat ./sources/banner.txt)\" --target=es2022,chrome109,safari16,firefox115 --outfile=./NamuLink.user.js",
+    "debug": "esbuild sources/src/index.ts --bundle --define:global=window --inject:./sources/esbuild.inject.ts --banner:js=\"$(cat ./sources/banner.txt)\" --target=es2022,chrome109,safari16,firefox115 --outfile=./NamuLink-debug.user.js"
+  },
+  "keywords": [],
+  "author": {
+    "name": "PiQuark6046",
+    "email": "piquark6046@proton.me",
+    "url": "https://github.com/PiQuark6046"
+  },
+  "contributors": [
+    {
+      "name": "green1052",
+      "url": "https://github.com/green1052"
+    },
+    {
+      "name": "gaeulbyul",
+      "url": "https://github.com/gaeulbyul"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^20.10.6",
+    "superstruct": "^1.0.3"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "esbuild": "^0.19.11",
+    "eslint": "^8.54.0",
+    "eslint-config-xo": "^0.43.1",
+    "eslint-config-xo-typescript": "^1.0.1",
+    "typescript": "^5.3.2"
+  }
 }
