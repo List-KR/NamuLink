@@ -51,7 +51,6 @@ Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 		const Decoded = Reflect.apply(Target, ThisArg, Args) as string
 		if (Decoded.includes('//adcr.naver.com/adcr?')) {
 			console.debug('[NamuLink:index]: TextDecoder.prototype.decode:', [Target, ThisArg, Args])
-			ShowElements()
 			Win.dispatchEvent(NagivationEvent)
 			return new Error()
 		}
@@ -89,6 +88,7 @@ const ShowElements = () => {
 }
 
 const HideLeftoverElement = () => {
+	ShowElements()
 	const ElementsInArticle = Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1)~ div * ~ div[class]'))
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1) ~ *')))
 	const HTMLElementsInArticle = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
