@@ -52,6 +52,7 @@ Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 		const Decoded = Reflect.apply(Target, ThisArg, Args) as string
 		if (Decoded.includes('//adcr.naver.com/adcr?')) {
 			console.debug('[NamuLink:index]: TextDecoder.prototype.decode:', [Target, ThisArg, Args])
+			Win.dispatchEvent(NagivationEvent)
 			Win.dispatchEvent(NagivationAdvertEvent)
 			return new Error()
 		}
