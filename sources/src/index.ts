@@ -85,6 +85,7 @@ const ShowElements = () => {
 	HiddenElements.forEach(TargetElement => {
 		TargetElement.style.removeProperty('display')
 	})
+	HiddenElements = []
 }
 
 const HideLeftoverElement = () => {
