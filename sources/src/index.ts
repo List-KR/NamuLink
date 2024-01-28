@@ -81,6 +81,7 @@ const HideElements = (TargetElements: HTMLElement[]) => {
 }
 
 const ShowElements = () => {
+	console.debug('[NamuLink:index]: ShowElements:', HiddenElements)
 	HiddenElements = HiddenElements.filter(HideElement => HideElement.parentElement !== null)
 	HiddenElements.forEach(TargetElement => {
 		TargetElement.style.removeProperty('display')
