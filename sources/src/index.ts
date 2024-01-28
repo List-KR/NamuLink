@@ -51,6 +51,7 @@ Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 		const Decoded = Reflect.apply(Target, ThisArg, Args) as string
 		if (Decoded.includes('//adcr.naver.com/adcr?')) {
 			console.debug('[NamuLink:index]: TextDecoder.prototype.decode:', [Target, ThisArg, Args])
+			ShowElements()
 			Win.dispatchEvent(NagivationEvent)
 			return new Error()
 		}
@@ -70,9 +71,19 @@ Win.Array.prototype.push = new Proxy(Win.Array.prototype.push, {
 	},
 })
 
+var HiddenElements: HTMLElement[] = []
+
 const HideElements = (TargetElements: HTMLElement[]) => {
+	HiddenElements.push(...TargetElements)
 	TargetElements.forEach(TargetElement => {
 		TargetElement.style.setProperty('display', 'none', 'important')
+	})
+}
+
+const ShowElements = () => {
+	HiddenElements = HiddenElements.filter(HideElement => HideElement.parentElement !== null)
+	HiddenElements.forEach(TargetElement => {
+		TargetElement.style.removeProperty('display')
 	})
 }
 
