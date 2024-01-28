@@ -7,6 +7,7 @@ declare const unsafeWindow: unsafeWindow
 // eslint-disable-next-line no-negated-condition
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
+const NagivationAdvertEvent = new Event('namuwikinavigationwithadvert')
 const NagivationEvent = new Event('namuwikinavigation')
 const FristVisitEvent = new Event('namuwikifristvisit')
 
@@ -51,8 +52,12 @@ Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 		const Decoded = Reflect.apply(Target, ThisArg, Args) as string
 		if (Decoded.includes('//adcr.naver.com/adcr?')) {
 			console.debug('[NamuLink:index]: TextDecoder.prototype.decode:', [Target, ThisArg, Args])
-			Win.dispatchEvent(NagivationEvent)
+			Win.dispatchEvent(NagivationAdvertEvent)
 			return new Error()
+		}
+
+		if (Decoded === 'enable_ads') {
+			Win.dispatchEvent(NagivationEvent)
 		}
 
 		return Decoded
@@ -89,7 +94,6 @@ const ShowElements = () => {
 }
 
 const HideLeftoverElement = () => {
-	ShowElements()
 	const ElementsInArticle = Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1)~ div * ~ div[class]'))
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1) ~ *')))
 	const HTMLElementsInArticle = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
@@ -109,5 +113,6 @@ const HideLeftoverElement = () => {
 	HideElements(TargetElements)
 }
 
-Win.addEventListener('namuwikinavigation', HideLeftoverElement)
+Win.addEventListener('namuwikinavigationwithadvert', HideLeftoverElement)
 Win.addEventListener('namuwikifristvisit', HideLeftoverElement)
+Win.addEventListener('namuwikinavigation', 	ShowElements)
