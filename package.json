@@ -1,6 +1,6 @@
 {
   "name": "namulink",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "",
   "type": "module",
   "scripts": {
@@ -23,6 +23,10 @@
     {
       "name": "gaeulbyul",
       "url": "https://github.com/gaeulbyul"
+    },
+    {
+      "name": "Adguard Software Ltd.",
+      "url": "https://adguard.com/"
     }
   ],
   "license": "MIT",
