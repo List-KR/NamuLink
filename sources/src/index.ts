@@ -98,20 +98,30 @@ const HideLeftoverElement = () => {
 	const ElementsInArticle = Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1)~ div * ~ div[class]'))
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1) ~ *')))
 	const HTMLElementsInArticle = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
-	var TargetElements: HTMLElement[] = []
-	TargetElements = HTMLElementsInArticle.filter(HTMLElementInArticle => HTMLElementInArticle.innerText.length < 25)
-	TargetElements = TargetElements.filter(HTMLElementInArticle => {
-		const ParentElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
-		const ParentHTMLElements = ParentElements.filter(ParentElement => ParentElement instanceof HTMLElement) as HTMLElement[]
-		return ParentHTMLElements.some(ParentElement => Number(getComputedStyle(ParentElement).getPropertyValue('margin-bottom').replace(/px$/, '')) >= 4)
+	var FilteredElements: HTMLElement[] = []
+	const TargetedElements: HTMLElement[] = []
+	FilteredElements = HTMLElementsInArticle.filter(HTMLElementInArticle => HTMLElementInArticle.innerText.length < 25)
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
+		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
+		return ChildHTMLElements.some(ChildElement => Number(getComputedStyle(ChildElement).getPropertyValue('margin-bottom').replace(/px$/, '')) >= 4)
 	})
-	TargetElements = TargetElements.filter(HTMLElementInArticle => {
-		const ParentElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
-		const ParentHTMLElements = ParentElements.filter(ParentElement => ParentElement instanceof HTMLElement) as HTMLElement[]
-		return ParentHTMLElements.filter(ParentElement => getComputedStyle(ParentElement).getPropertyValue('animation-iteration-count') === 'infinite').length >= 6
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
+		return ChildElements.filter(ChildElement => ChildElement instanceof HTMLIFrameElement).length === 0
 	})
-	console.debug('[NamuLink:index]: HideLeftoverElement:', TargetElements)
-	HideElements(TargetElements)
+	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
+		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
+		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
+		return ChildHTMLElements.filter(ChildElement => getComputedStyle(ChildElement).getPropertyValue('animation-iteration-count') === 'infinite').length >= 6
+	}))
+	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
+		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
+		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
+		return ChildHTMLElements.some(ChildElement => Number(getComputedStyle(ChildElement).getPropertyValue('margin-bottom').replace(/px$/, '')) >= 10)
+	}))
+	console.debug('[NamuLink:index]: HideLeftoverElement:', TargetedElements)
+	HideElements(TargetedElements)
 }
 
 Win.addEventListener('namuwikinavigationwithadvert', HideLeftoverElement)
