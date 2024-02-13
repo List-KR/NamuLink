@@ -57,7 +57,7 @@ Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 			return new Error()
 		}
 
-		if (Decoded === 'enable_ads') {
+		if (Decoded === 'enable_ads' || decodeURIComponent(location.href).includes(Decoded)) {
 			Win.dispatchEvent(NagivationEvent)
 		}
 
