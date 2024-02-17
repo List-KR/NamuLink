@@ -115,10 +115,15 @@ const HideLeftoverElement = () => {
 		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
 		return ChildHTMLElements.filter(ChildElement => getComputedStyle(ChildElement).getPropertyValue('animation-iteration-count') === 'infinite').length >= 6
 	}))
-	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
 		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
 		return ChildHTMLElements.some(ChildElement => Number(getComputedStyle(ChildElement).getPropertyValue('margin-bottom').replace(/px$/, '')) >= 10)
+	})
+	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
+		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
+		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
+		return ChildHTMLElements.every(ChildElement => Number(getComputedStyle(ChildElement).getPropertyValue('margin-left').replace(/px$/, '')) <= 10)
 	}))
 	console.debug('[NamuLink:index]: HideLeftoverElement:', TargetedElements)
 	HideElements(TargetedElements)
