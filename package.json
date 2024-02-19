@@ -35,8 +35,8 @@
     "superstruct": "^1.0.3"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
     "esbuild": "^0.20.0",
     "eslint": "^8.54.0",
     "eslint-config-xo": "^0.44.0",
