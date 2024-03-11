@@ -21,4 +21,4 @@
 // @inject-into  page
 // ==/UserScript==
 // Used libraries:
-// - Superstruct https://github.com/ianstormtaylor/superstruct
+// - Zod https://github.com/colinhacks/zod
