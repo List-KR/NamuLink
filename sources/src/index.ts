@@ -1,4 +1,4 @@
-import {Superstruct} from '../esbuild.inject.js'
+import * as Zod from 'zod'
 
 type unsafeWindow = typeof window
 // eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention
@@ -22,7 +22,7 @@ const CheckEableAdsAdsMetadata = (AdsMetadata: unknown) => {
 				if (typeof AdsMetadata[Key] === 'string' && (AdsMetadata[Key] as string).includes('//adcr.naver.com/adcr?')) {
 					return true
 				}
-			} catch (error) {}
+			} catch (error) { /* empty */ }
 		}
 	}
 
@@ -31,11 +31,11 @@ const CheckEableAdsAdsMetadata = (AdsMetadata: unknown) => {
 
 const IsFakeNumber = (Args: string) => !Number.isNaN(Number(Args))
 
-const EableAdsAdsFlagObj = Superstruct.object({
-	enable_ads: Superstruct.define('IsFakeNumber', IsFakeNumber),
+const EableAdsAdsFlagObj = Zod.object({
+	enable_ads: Zod.custom(IsFakeNumber),
 })
 
-const IsEableAdsObject = (Args: unknown) => typeof Args[0] !== 'undefined' && typeof Args[0] === 'object' && Superstruct.validate(Args, EableAdsAdsFlagObj) && CheckEableAdsAdsMetadata(Args[0])
+const IsEableAdsObject = (Args: unknown) => typeof Args[0] !== 'undefined' && typeof Args[0] === 'object' && EableAdsAdsFlagObj.safeParse(Args).success && CheckEableAdsAdsMetadata(Args[0])
 
 Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
 	apply(Target, ThisArg, Args) {

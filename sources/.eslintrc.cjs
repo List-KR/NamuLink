@@ -1,38 +1,25 @@
 module.exports = {
-	env: {
-		es2022: true
-	},
 	extends: [
-		'xo'
+		'eslint:recommended',
+		'plugin:@typescript-eslint/recommended',
 	],
-	overrides: [
-		{
-			extends: [
-				'xo-typescript',
-			],
-			files: [
-				'**/**.ts',
-			],
-			rules:
-			{
-				'@typescript-eslint/naming-convention': ['error', {
-					selector: ['variableLike', 'parameterProperty', 'classProperty', 'typeProperty'],
-					format: ['PascalCase']
-				}],
-				'@typescript-eslint/semi': ['error', 'never'],
-				'@typescript-eslint/prefer-nullish-coalescing': 'off',
-				'new-cap': 'off'
-			}
-		}
-	],
+	parser: '@typescript-eslint/parser',
 	parserOptions: {
-		ecmaVersion: 'latest',
-		sourceType: 'module'
+		tsconfigRootDir: __dirname,
+		project: '../tsconfig.json'
 	},
+	plugins: ['@typescript-eslint'],
 	rules: {
+		'@typescript-eslint/naming-convention': ['error', {
+			selector: ['variableLike', 'parameterProperty', 'classProperty', 'typeProperty'],
+			format: ['PascalCase']
+		}],
+		'@typescript-eslint/prefer-nullish-coalescing': 'off',
+		'new-cap': 'off',
     'no-var': 'off',
 		'comma-dangle': 'off',
 		indent: ['off', 'tab'],
-		semi: 'off'
-	}
+		semi: ['error', 'never']
+	},
+	ignorePatterns: ['dist', 'node_modules', '.eslintrc.cjs']
 }
