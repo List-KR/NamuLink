@@ -22,7 +22,7 @@ const CheckEableAdsAdsMetadata = (AdsMetadata: unknown) => {
 				if (typeof AdsMetadata[Key] === 'string' && (AdsMetadata[Key] as string).includes('//adcr.naver.com/adcr?')) {
 					return true
 				}
-			} catch (error) {}
+			} catch (error) { /* empty */ }
 		}
 	}
 
