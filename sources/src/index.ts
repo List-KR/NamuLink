@@ -59,6 +59,7 @@ const ShowElements = () => {
 const HideLeftoverElement = () => {
 	const ElementsInArticle = Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1)~ div * ~ div[class]'))
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1) ~ *')))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]) div[class=""] div[class*=" "]')))
 	const HTMLElementsInArticle = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
 	var FilteredElements: HTMLElement[] = []
 	const TargetedElements: HTMLElement[] = []
