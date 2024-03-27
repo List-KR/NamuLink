@@ -21,4 +21,3 @@
 // @inject-into  page
 // ==/UserScript==
 // Used libraries:
-// - Zod https://github.com/colinhacks/zod
