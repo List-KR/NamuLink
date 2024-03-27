@@ -1,5 +1,3 @@
-import * as Zod from 'zod'
-
 type unsafeWindow = typeof window
 // eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention
 declare const unsafeWindow: unsafeWindow
@@ -10,42 +8,6 @@ const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 const NagivationAdvertEvent = new Event('namuwikinavigationwithadvert')
 const NagivationEvent = new Event('namuwikinavigation')
 const FristVisitEvent = new Event('namuwikifristvisit')
-
-const CheckEableAdsAdsMetadata = (AdsMetadata: unknown) => {
-	if (Array.isArray(AdsMetadata)) {
-		if (AdsMetadata.toString().includes('//adcr.naver.com/adcr?')) {
-			return true
-		}
-	} else {
-		for (const Key of Object.keys(AdsMetadata)) {
-			try {
-				if (typeof AdsMetadata[Key] === 'string' && (AdsMetadata[Key] as string).includes('//adcr.naver.com/adcr?')) {
-					return true
-				}
-			} catch (error) { /* empty */ }
-		}
-	}
-
-	return false
-}
-
-const IsFakeNumber = (Args: string) => !Number.isNaN(Number(Args))
-
-const EableAdsAdsFlagObj = Zod.object({
-	enable_ads: Zod.custom(IsFakeNumber),
-})
-
-const IsEableAdsObject = (Args: unknown) => typeof Args[0] !== 'undefined' && typeof Args[0] === 'object' && EableAdsAdsFlagObj.safeParse(Args).success && CheckEableAdsAdsMetadata(Args[0])
-
-Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
-	apply(Target, ThisArg, Args) {
-		if (IsEableAdsObject(Args)) {
-			console.debug('[NamuLink:index]: Object.defineProperty:', [Target, ThisArg, Args])
-		} else {
-			Reflect.apply(Target, ThisArg, Args)
-		}
-	},
-})
 
 Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 	apply(Target, ThisArg, Args) {
