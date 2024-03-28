@@ -1,3 +1,6 @@
+import PLimit from 'p-limit'
+import {MultithreadArray} from 'multithread-array'
+
 type unsafeWindow = typeof window
 // eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention
 declare const unsafeWindow: unsafeWindow
@@ -56,10 +59,7 @@ const ShowElements = () => {
 	HiddenElements = []
 }
 
-const HideLeftoverElement = () => {
-	const ElementsInArticle = Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1)~ div * ~ div[class]'))
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1) ~ *')))
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]) div[class=""] div[class*=" "]')))
+const HideLeftoverElementNano = (ElementsInArticle) => {
 	const HTMLElementsInArticle = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
 	var FilteredElements: HTMLElement[] = []
 	const TargetedElements: HTMLElement[] = []
@@ -91,6 +91,20 @@ const HideLeftoverElement = () => {
 		const PeerHTMLElements = PeerElements.filter(PeerElement => PeerElement instanceof HTMLElement) as HTMLElement[]
 		return ChildHTMLElements.every(ChildHTMLElement => !ChildHTMLElement.innerText.includes('alt=\'external/')) && PeerHTMLElements.filter(PeerHTMLElement => PeerHTMLElement.nextElementSibling === HTMLElementInArticle && !(PeerHTMLElement instanceof HTMLHeadingElement)).length > 0
 	}))
+	return TargetedElements
+}
+
+const HideLeftoverElement = async () => {
+	const ElementsInArticle = Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1)~ div * ~ div[class]'))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1) ~ *')))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]) div[class=""] div[class*=" "]')))
+	let TargetedElements: HTMLElement[] = []
+	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
+	const PLimitJobs: Promise<HTMLElement[]>[] = []
+	for (const ElementsInArticleChunk of MultithreadArray(ElementsInArticle, {Count: (navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency})) {
+		PLimitJobs.push(PLimitInstance(() => HideLeftoverElementNano(ElementsInArticleChunk)))
+	}
+	TargetedElements = await Promise.all(PLimitJobs).then(PLimitResults => PLimitResults.flat())
 	console.debug('[NamuLink:index]: HideLeftoverElement:', TargetedElements)
 	HideElements(TargetedElements)
 }
