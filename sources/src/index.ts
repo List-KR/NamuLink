@@ -73,6 +73,9 @@ const HideLeftoverElementNano = (ElementsInArticle) => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
 		return ChildElements.filter(ChildElement => ChildElement instanceof HTMLIFrameElement).length === 0
 	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return HTMLElementInArticle.querySelectorAll('span[id^="fn-"] + a[href^="#rfn-"]').length === 0
+	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
 		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
