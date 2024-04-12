@@ -59,11 +59,10 @@ const ShowElements = () => {
 	HiddenElements = []
 }
 
-const HideLeftoverElementNano = (ElementsInArticle) => {
-	const HTMLElementsInArticle = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
-	var FilteredElements: HTMLElement[] = []
+const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
+	var FilteredElements = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
 	const TargetedElements: HTMLElement[] = []
-	FilteredElements = HTMLElementsInArticle.filter(HTMLElementInArticle => HTMLElementInArticle.innerText.length < 25)
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => HTMLElementInArticle.innerText.length < 25)
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
 		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
