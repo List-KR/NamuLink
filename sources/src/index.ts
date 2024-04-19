@@ -97,9 +97,9 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 }
 
 const HideLeftoverElement = async () => {
-	const ElementsInArticle = Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1)~ div * ~ div[class]'))
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]):has(h1) ~ *')))
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('article div:not([class*=" "]) div[class] div[class*=" "]')))
+	const ElementsInArticle = Array.from(Win.document.querySelectorAll('div:not([class*=" "]):has(h1)~ div * ~ div[class]'))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]):has(h1) ~ *')))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] div[class*=" "]')))
 	let TargetedElements: HTMLElement[] = []
 	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
 	const PLimitJobs: Promise<HTMLElement[]>[] = []
