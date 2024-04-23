@@ -1,5 +1,5 @@
 import PLimit from 'p-limit'
-import {SplitElementsIntoArrayLength} from 'multithread-array'
+import {SplitElementsIntoSubArrayLength} from 'multithread-array'
 
 type unsafeWindow = typeof window
 // eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention
@@ -75,6 +75,9 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return HTMLElementInArticle.querySelectorAll('span[id^="fn-"] + a[href^="#rfn-"]').length === 0
 	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.querySelectorAll('a[rel="noopener"][target="_blank"][class] > span ~ span')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('나무뉴스'))
+	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
 		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
@@ -103,7 +106,7 @@ const HideLeftoverElement = async () => {
 	let TargetedElements: HTMLElement[] = []
 	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
 	const PLimitJobs: Promise<HTMLElement[]>[] = []
-	for (const ElementsInArticleChunk of SplitElementsIntoArrayLength(ElementsInArticle, {Count: (navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency})) {
+	for (const ElementsInArticleChunk of SplitElementsIntoSubArrayLength(ElementsInArticle, {Count: 2})) {
 		PLimitJobs.push(PLimitInstance(() => HideLeftoverElementNano(ElementsInArticleChunk)))
 	}
 	TargetedElements = await Promise.all(PLimitJobs).then(PLimitResults => PLimitResults.flat())

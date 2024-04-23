@@ -1,6 +1,6 @@
 {
   "name": "namulink",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "description": "",
   "type": "module",
   "scripts": {
@@ -31,7 +31,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^20.12.6",
+    "@types/node": "^20.12.7",
     "multithread-array": "^2.0.0",
     "p-limit": "^5.0.0"
   },
@@ -40,8 +40,8 @@
     "@typescript-eslint/parser": "^7.1.1",
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
-    "pnpm": "^8.15.6",
-    "typescript": "^5.4.4",
-    "typescript-eslint": "^7.6.0"
+    "pnpm": "^9.0.5",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.7.1"
   }
 }
