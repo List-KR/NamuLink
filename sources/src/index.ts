@@ -75,6 +75,9 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return HTMLElementInArticle.querySelectorAll('span[id^="fn-"] + a[href^="#rfn-"]').length === 0
 	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.querySelectorAll('a[rel="noopener"][target="_blank"][class] > span ~ span')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('나무뉴스'))
+	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
 		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
