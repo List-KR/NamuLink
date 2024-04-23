@@ -1,5 +1,5 @@
 import PLimit from 'p-limit'
-import {SplitElementsIntoArrayLength} from 'multithread-array'
+import {SplitElementsIntoSubArrayLength} from 'multithread-array'
 
 type unsafeWindow = typeof window
 // eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention
@@ -106,7 +106,7 @@ const HideLeftoverElement = async () => {
 	let TargetedElements: HTMLElement[] = []
 	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
 	const PLimitJobs: Promise<HTMLElement[]>[] = []
-	for (const ElementsInArticleChunk of SplitElementsIntoArrayLength(ElementsInArticle, {Count: (navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency})) {
+	for (const ElementsInArticleChunk of SplitElementsIntoSubArrayLength(ElementsInArticle, {Count: 2})) {
 		PLimitJobs.push(PLimitInstance(() => HideLeftoverElementNano(ElementsInArticleChunk)))
 	}
 	TargetedElements = await Promise.all(PLimitJobs).then(PLimitResults => PLimitResults.flat())
