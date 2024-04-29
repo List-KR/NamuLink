@@ -12,37 +12,43 @@ const NagivationAdvertEvent = new Event('namuwikinavigationwithadvert')
 const NagivationEvent = new Event('namuwikinavigation')
 const FristVisitEvent = new Event('namuwikifristvisit')
 
+Win.Array.prototype.join = new Proxy(Win.Array.prototype.join, {
+	apply(Target, ThisArg, Args) {
+		if (typeof ThisArg === 'undefined' || typeof Args === 'undefined') {
+			return
+		}
+		const Result = Reflect.apply(Target, ThisArg, Args)
+		if (Result.includes('//adcr.naver.com/adcr?')) {
+			Win.dispatchEvent(FristVisitEvent)
+			Win.dispatchEvent(NagivationAdvertEvent)
+			return
+		}	
+		return Result
+	},
+})
 
-
-const AvoidBeforeInitialization = (ObjectParam: object) => {
-	var Result = []
+const ConvertObjToStringSafe = (ObjectParam: object) => {
+	var Result = ''
 	try {
-		Result = Object.entries(ObjectParam)
+		Result = JSON.stringify(ObjectParam)
 	} catch { /* empty */ }
 	return Result
 }
 
 Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
 	apply(Target, ThisArg, Args) {
-		const Result = Reflect.apply(Target, ThisArg, Args)
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		for (const [Key, Value] of AvoidBeforeInitialization(Result)) {
-			if (Array.isArray(Value) && Value.some(Subvalue => {
-				return typeof Subvalue === 'string' && Subvalue.includes('//adcr.naver.com/adcr?')
-			})) {
-				Win.dispatchEvent(FristVisitEvent)
-				Win.dispatchEvent(NagivationAdvertEvent)
-				throw new Error()
-			}
+		if (ConvertObjToStringSafe(Args).includes('//adcr.naver.com/adcr?')) {
+			return
 		}
 
-		if (Array.isArray(Result) && Result.every(Subvalue => Array.isArray(Subvalue) && Subvalue.some(SubSubvalue => {
+		if (Array.isArray(Args) && Args.every(Subvalue => Array.isArray(Subvalue) && Subvalue.some(SubSubvalue => {
 			return typeof SubSubvalue == 'string' && SubSubvalue === 'div'
 		}))) {
 			Win.dispatchEvent(NagivationEvent)
 		}
 
-		return Result
+		return Reflect.apply(Target, ThisArg, Args)
 	},
 })
 
@@ -107,6 +113,7 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 const HideLeftoverElement = async () => {
 	const ElementsInArticle = []
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "]:has(span ~ ul li) ~ div div[class] > div[class] div[class] ~ div[class]')))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] div[class*=" "]')))
 	let TargetedElements: HTMLElement[] = []
 	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
 	const PLimitJobs: Promise<HTMLElement[]>[] = []
