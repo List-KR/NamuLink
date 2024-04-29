@@ -12,32 +12,37 @@ const NagivationAdvertEvent = new Event('namuwikinavigationwithadvert')
 const NagivationEvent = new Event('namuwikinavigation')
 const FristVisitEvent = new Event('namuwikifristvisit')
 
-Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
+
+
+const AvoidBeforeInitialization = (ObjectParam: object) => {
+	var Result = []
+	try {
+		Result = Object.entries(ObjectParam)
+	} catch { /* empty */ }
+	return Result
+}
+
+Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
 	apply(Target, ThisArg, Args) {
-		const Decoded = Reflect.apply(Target, ThisArg, Args) as string
-		if (Decoded.includes('//adcr.naver.com/adcr?')) {
-			console.debug('[NamuLink:index]: TextDecoder.prototype.decode:', [Target, ThisArg, Args])
+		const Result = Reflect.apply(Target, ThisArg, Args)
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		for (const [Key, Value] of AvoidBeforeInitialization(Result)) {
+			if (Array.isArray(Value) && Value.some(Subvalue => {
+				return typeof Subvalue === 'string' && Subvalue.includes('//adcr.naver.com/adcr?')
+			})) {
+				Win.dispatchEvent(FristVisitEvent)
+				Win.dispatchEvent(NagivationAdvertEvent)
+				throw new Error()
+			}
+		}
+
+		if (Array.isArray(Result) && Result.every(Subvalue => Array.isArray(Subvalue) && Subvalue.some(SubSubvalue => {
+			return typeof SubSubvalue == 'string' && SubSubvalue === 'div'
+		}))) {
 			Win.dispatchEvent(NagivationEvent)
-			Win.dispatchEvent(NagivationAdvertEvent)
-			return new Error()
 		}
 
-		if (Decoded === 'enable_ads' || decodeURIComponent(location.href).includes(Decoded)) {
-			Win.dispatchEvent(NagivationEvent)
-		}
-
-		return Decoded
-	},
-})
-
-Win.Array.prototype.push = new Proxy(Win.Array.prototype.push, {
-	apply(Target, ThisArg, Args) {
-		if (Args.toString().includes('//adcr.naver.com/adcr?')) {
-			console.debug('[NamuLink:index]: Array.prototype.push:', [Target, ThisArg, Args])
-			Win.dispatchEvent(FristVisitEvent)
-		} else {
-			Reflect.apply(Target, ThisArg, Args)
-		}
+		return Result
 	},
 })
 
@@ -100,9 +105,8 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 }
 
 const HideLeftoverElement = async () => {
-	const ElementsInArticle = Array.from(Win.document.querySelectorAll('div:not([class*=" "]):has(h1)~ div * ~ div[class]'))
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]):has(h1) ~ *')))
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] div[class*=" "]')))
+	const ElementsInArticle = []
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "]:has(span ~ ul li) ~ div div[class] > div[class] div[class] ~ div[class]')))
 	let TargetedElements: HTMLElement[] = []
 	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
 	const PLimitJobs: Promise<HTMLElement[]>[] = []
