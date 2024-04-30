@@ -12,13 +12,27 @@ const NagivationAdvertEvent = new Event('namuwikinavigationwithadvert')
 const NagivationEvent = new Event('namuwikinavigation')
 const FristVisitEvent = new Event('namuwikifristvisit')
 
+Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
+	apply(Target, ThisArg, Args) {
+		// eslint-disable-next-line @typescript-eslint/ban-types
+		if (typeof ThisArg === 'function' && (ThisArg as Function).toString().includes('fromCharCode') && Args[0] === null
+		&& Args[1] instanceof Uint16Array && new TextDecoder().decode(Args[1]).replaceAll('\x00', '').includes('adcr.naver.com')) {
+			console.debug('[NamuLink:index]: Function.prototype.apply:', ThisArg, Args)
+			Win.dispatchEvent(FristVisitEvent)
+			Win.dispatchEvent(NagivationAdvertEvent)
+			return
+		}
+		return Reflect.apply(Target, ThisArg, Args)
+	}
+})
+
 Win.Array.prototype.join = new Proxy(Win.Array.prototype.join, {
 	apply(Target, ThisArg, Args) {
 		if (typeof ThisArg === 'undefined' || typeof Args === 'undefined') {
 			return
 		}
 		const Result = Reflect.apply(Target, ThisArg, Args)
-		if (Result.includes('//adcr.naver.com/adcr?')) {
+		if (Result.includes('adcr.naver.com')) {
 			Win.dispatchEvent(FristVisitEvent)
 			Win.dispatchEvent(NagivationAdvertEvent)
 			return
@@ -26,19 +40,24 @@ Win.Array.prototype.join = new Proxy(Win.Array.prototype.join, {
 		return Result
 	},
 })
-
 const ConvertObjToStringSafe = (ObjectParam: object) => {
 	var Result = ''
 	try {
-		Result = JSON.stringify(ObjectParam)
+		Result = JSON.stringify(ObjectParam, (Key, Value) => {
+			if (typeof Value === 'function') {
+				return Value.toString()
+			}
+			return Value
+		})
 	} catch { /* empty */ }
 	return Result
 }
 
 Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
 	apply(Target, ThisArg, Args) {
+		const Result = ConvertObjToStringSafe(Args)
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		if (ConvertObjToStringSafe(Args).includes('//adcr.naver.com/adcr?')) {
+		if (Result.includes('adcr.naver.com')) {
 			return
 		}
 
