@@ -10,65 +10,22 @@ const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
 const NagivationAdvertEvent = new Event('namuwikinavigationwithadvert')
 const NagivationEvent = new Event('namuwikinavigation')
-const FristVisitEvent = new Event('namuwikifristvisit')
 
 Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
 	apply(Target, ThisArg, Args) {
 		// eslint-disable-next-line @typescript-eslint/ban-types
-		if (typeof ThisArg === 'function' && (ThisArg as Function).toString().includes('fromCharCode') && Args[0] === null
-		&& Args[1] instanceof Uint16Array && new TextDecoder().decode(Args[1]).replaceAll('\x00', '').includes('adcr.naver.com')) {
+		const IsUint16Array = typeof ThisArg === 'function' && (ThisArg as Function).toString().includes('fromCharCode')
+		&& Args[0] === null && Args[1] instanceof Uint16Array
+		if (IsUint16Array && new TextDecoder().decode(Args[1]).replaceAll('\x00', '').includes('adcr?x=')) {
 			console.debug('[NamuLink:index]: Function.prototype.apply:', ThisArg, Args)
-			Win.dispatchEvent(FristVisitEvent)
 			Win.dispatchEvent(NagivationAdvertEvent)
-			return
+			throw new Error()
+		}
+		if (IsUint16Array && new TextDecoder().decode(Args[1]).replaceAll('\x00', '').includes('wiki.')) {
+			Win.dispatchEvent(NagivationEvent)
 		}
 		return Reflect.apply(Target, ThisArg, Args)
 	}
-})
-
-Win.Array.prototype.join = new Proxy(Win.Array.prototype.join, {
-	apply(Target, ThisArg, Args) {
-		if (typeof ThisArg === 'undefined' || typeof Args === 'undefined') {
-			return
-		}
-		const Result = Reflect.apply(Target, ThisArg, Args)
-		if (Result.includes('adcr.naver.com')) {
-			Win.dispatchEvent(FristVisitEvent)
-			Win.dispatchEvent(NagivationAdvertEvent)
-			return
-		}	
-		return Result
-	},
-})
-const ConvertObjToStringSafe = (ObjectParam: object) => {
-	var Result = ''
-	try {
-		Result = JSON.stringify(ObjectParam, (Key, Value) => {
-			if (typeof Value === 'function') {
-				return Value.toString()
-			}
-			return Value
-		})
-	} catch { /* empty */ }
-	return Result
-}
-
-Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
-	apply(Target, ThisArg, Args) {
-		const Result = ConvertObjToStringSafe(Args)
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		if (Result.includes('adcr.naver.com')) {
-			return
-		}
-
-		if (Array.isArray(Args) && Args.every(Subvalue => Array.isArray(Subvalue) && Subvalue.some(SubSubvalue => {
-			return typeof SubSubvalue == 'string' && SubSubvalue === 'div'
-		}))) {
-			Win.dispatchEvent(NagivationEvent)
-		}
-
-		return Reflect.apply(Target, ThisArg, Args)
-	},
 })
 
 var HiddenElements: HTMLElement[] = []
