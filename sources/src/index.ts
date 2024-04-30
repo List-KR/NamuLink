@@ -21,7 +21,7 @@ Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
 			Win.dispatchEvent(NagivationAdvertEvent)
 			throw new Error()
 		}
-		if (IsUint16Array && new TextDecoder().decode(Args[1]).replaceAll('\x00', '').includes('wiki.')) {
+		if (IsUint16Array && new TextDecoder().decode(Args[1]).replaceAll('\x00', '').startsWith('wiki/i')) {
 			Win.dispatchEvent(NagivationEvent)
 		}
 		return Reflect.apply(Target, ThisArg, Args)
