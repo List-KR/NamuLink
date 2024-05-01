@@ -11,20 +11,26 @@ const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 const NagivationAdvertEvent = new Event('namuwikinavigationwithadvert')
 const NagivationEvent = new Event('namuwikinavigation')
 
-Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
-	apply(Target, ThisArg, Args) {
-		// eslint-disable-next-line @typescript-eslint/ban-types
-		const IsUint16Array = typeof ThisArg === 'function' && (ThisArg as Function).toString().includes('fromCharCode')
-		&& Args[0] === null && Args[1] instanceof Uint16Array
-		if (IsUint16Array && new TextDecoder().decode(Args[1]).replaceAll('\x00', '').includes('adcr?x=')) {
-			console.debug('[NamuLink:index]: Function.prototype.apply:', ThisArg, Args)
-			Win.dispatchEvent(NagivationAdvertEvent)
-			throw new Error()
+Win.fetch = new Proxy(Win.fetch, {
+	async apply(Target, ThisArg, Args) {
+		const Result = Reflect.apply(Target, ThisArg, Args)
+		if (typeof Args[0] === 'string' && /^\/i\/[a-zA-Z0-9_-]{200,}/.test(Args[0]) && (Args[1] as RequestInit).method === 'GET') {
+			const ResultCloned = await (Result as Promise<Response>).then(Response => Response.clone())
+			if ((await ResultCloned.arrayBuffer()).byteLength > 1000) {
+				Win.dispatchEvent(NagivationAdvertEvent)
+			}
 		}
-		if (IsUint16Array && new TextDecoder().decode(Args[1]).replaceAll('\x00', '').startsWith('wiki/i')) {
+		return Result
+	}
+})
+
+Win.Array.prototype.join = new Proxy(Win.Array.prototype.join, {
+	apply(Target, ThisArg, Args) {
+		const Result = Reflect.apply(Target, ThisArg, Args)
+		if ((Result as string).startsWith('noscript[data-n-head="]')) {
 			Win.dispatchEvent(NagivationEvent)
 		}
-		return Reflect.apply(Target, ThisArg, Args)
+		return Result
 	}
 })
 
