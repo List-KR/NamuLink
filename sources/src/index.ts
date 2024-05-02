@@ -123,6 +123,9 @@ const HideAdElementNano = (ElementsInArticle: Element[]) => {
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return !Array.from(HTMLElementInArticle.querySelectorAll('a[rel="noopener"][target="_blank"][class] > span ~ span')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('나무뉴스'))
 	})
+	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
+		return HTMLElementInArticle.innerText.includes('광고등록') && HTMLElementInArticle.innerText.includes('파워링크') 
+	}))
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
 		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
@@ -174,6 +177,7 @@ const HideAdElement = async () => {
 
 
 Win.addEventListener('namuwikiloadedadvert', HideAdElement)
+Win.addEventListener('namuwikiloadedadvert', HideLeftoverElement)
 Win.addEventListener('namuwikiunloadedadvert', HideLeftoverElement)
 Win.addEventListener('namuwikifristvisit', HideLeftoverElement)
 Win.addEventListener('namuwikinavigation', 	ShowElements)
