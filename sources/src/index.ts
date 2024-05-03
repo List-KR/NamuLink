@@ -9,8 +9,27 @@ declare const unsafeWindow: unsafeWindow
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
 const NamuWikiUnloadedAdEvent = new Event('namuwikiunloadedadvert')
-const NamuWikiLoadedAdEvent = new Event('namuwikiloadedadvert')
 const NagivationEvent = new Event('namuwikinavigation')
+
+Win.Object.getOwnPropertyDescriptor = new Proxy(Win.Object.getPrototypeOf, {
+	apply(Target, ThisArg, Args) {
+		if (typeof Args[1] === 'string' && Args[1] === 'enable_ads') {
+			return
+		}
+		return Reflect.apply(Target, ThisArg, Args)
+	}
+})
+
+Win.encodeURIComponent = new Proxy(Win.encodeURIComponent, {
+	apply(Target, ThisArg, Args) {
+		console.debug(Args)
+		if (document.title.includes(Args.filter(Arg => typeof Arg === 'string')[0])) {
+			Win.dispatchEvent(NamuWikiUnloadedAdEvent)
+			return
+		}
+		return Reflect.apply(Target, ThisArg, Args)
+	}
+})
 
 Win.fetch = new Proxy(Win.fetch, {
 	async apply(Target, ThisArg, Args) {
@@ -22,17 +41,6 @@ Win.fetch = new Proxy(Win.fetch, {
 			}
 		}
 		return Result
-	}
-})
-
-Win.EventTarget.prototype.addEventListener = new Proxy(Win.EventTarget.prototype.addEventListener, {
-	apply(Target, ThisArg, Args) {
-		// eslint-disable-next-line @typescript-eslint/ban-types
-		if (Args[0] === 'click' && typeof Args[1] === 'function' && (Args[1] as Function).toString().includes('timeStamp')
-		&& ThisArg instanceof HTMLElement && /.+\..+/.test(ThisArg.innerText) && ThisArg.querySelectorAll('*').length === 0) {
-			Win.dispatchEvent(NamuWikiLoadedAdEvent)
-		}
-		return Reflect.apply(Target, ThisArg, Args)
 	}
 })
 
@@ -104,47 +112,6 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 	return TargetedElements
 }
 
-const HideAdElementNano = (ElementsInArticle: Element[]) => {
-	var FilteredElements = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
-	const TargetedElements: HTMLElement[] = []
-	FilteredElements = FilteredElements.filter(HTMLElementInArticle => HTMLElementInArticle.innerText.length > 45)
-	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
-		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
-		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
-		return ChildHTMLElements.some(ChildElement => Number(getComputedStyle(ChildElement).getPropertyValue('margin-bottom').replace(/px$/, '')) >= 4)
-	})
-	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
-		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
-		return ChildElements.filter(ChildElement => ChildElement instanceof HTMLIFrameElement).length === 0
-	})
-	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
-		return HTMLElementInArticle.querySelectorAll('span[id^="fn-"] + a[href^="#rfn-"]').length === 0
-	})
-	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
-		return !Array.from(HTMLElementInArticle.querySelectorAll('a[rel="noopener"][target="_blank"][class] > span ~ span')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('나무뉴스'))
-	})
-	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
-		return HTMLElementInArticle.innerText.includes('광고등록') && HTMLElementInArticle.innerText.includes('파워링크') 
-	}))
-	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
-		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
-		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
-		return ChildHTMLElements.some(ChildElement => Number(getComputedStyle(ChildElement).getPropertyValue('margin-bottom').replace(/px$/, '')) >= 10) &&
-		ChildHTMLElements.every(ChildElement => Number(getComputedStyle(ChildElement).getPropertyValue('margin-left').replace(/px$/, '')) <= 10)
-	})
-	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
-		return HTMLElementInArticle.querySelectorAll('div:has(a) ~ div:has(a) ~ div:has(a)').length > 0
-	})
-	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
-		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
-		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
-		const PeerElements = Array.from(HTMLElementInArticle.parentElement?.querySelectorAll('*') ?? [])
-		const PeerHTMLElements = PeerElements.filter(PeerElement => PeerElement instanceof HTMLElement) as HTMLElement[]
-		return ChildHTMLElements.every(ChildHTMLElement => !ChildHTMLElement.innerText.includes('alt=\'external/')) && PeerHTMLElements.filter(PeerHTMLElement => PeerHTMLElement.nextElementSibling === HTMLElementInArticle && !(PeerHTMLElement instanceof HTMLHeadingElement)).length > 0
-	}))
-	return TargetedElements
-}
-
 const HideLeftoverElement = async () => {
 	const ElementsInArticle = []
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "]:has(span ~ ul li) ~ div div[class] > div[class] div[class] ~ div[class]')))
@@ -160,23 +127,6 @@ const HideLeftoverElement = async () => {
 	HideElements(TargetedElements)
 }
 
-const HideAdElement = async () => {
-	const ElementsInArticle = []
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "]:has(span ~ ul li) ~ div div[class] > div[class] div[class] ~ div[class]')))
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] div[class*=" "]')))
-	let TargetedElements: HTMLElement[] = []
-	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
-	const PLimitJobs: Promise<HTMLElement[]>[] = []
-	for (const ElementsInArticleChunk of SplitElementsIntoSubArrayLength(ElementsInArticle, {Count: 2})) {
-		PLimitJobs.push(PLimitInstance(() => HideAdElementNano(ElementsInArticleChunk)))
-	}
-	TargetedElements = await Promise.all(PLimitJobs).then(PLimitResults => PLimitResults.flat())
-	console.debug('[NamuLink:index]: HideLeftoverElement:', TargetedElements)
-	HideElements(TargetedElements)
-}
-
-
-Win.addEventListener('namuwikiloadedadvert', HideAdElement)
 Win.addEventListener('namuwikiloadedadvert', HideLeftoverElement)
 Win.addEventListener('namuwikiunloadedadvert', HideLeftoverElement)
 Win.addEventListener('namuwikifristvisit', HideLeftoverElement)
