@@ -11,23 +11,22 @@ const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 const NamuWikiUnloadedAdEvent = new Event('namuwikiunloadedadvert')
 const NagivationEvent = new Event('namuwikinavigation')
 
-Win.Object.getOwnPropertyDescriptor = new Proxy(Win.Object.getPrototypeOf, {
+Win.Object.getOwnPropertyDescriptor = new Proxy(Win.Object.getOwnPropertyDescriptor, {
 	apply(Target, ThisArg, Args) {
-		if (typeof Args[1] === 'string' && Args[1] === 'enable_ads') {
+		if (typeof Args[1] === 'string' && (Args[1] === 'enable_ads' || Args[1] === 'to_duration')) {
 			return
 		}
 		return Reflect.apply(Target, ThisArg, Args)
 	}
 })
 
-Win.encodeURIComponent = new Proxy(Win.encodeURIComponent, {
+Win.Element.prototype.getBoundingClientRect = new Proxy(Win.Element.prototype.getBoundingClientRect, {
 	apply(Target, ThisArg, Args) {
-		console.debug(Args)
-		if (document.title.includes(Args.filter(Arg => typeof Arg === 'string')[0])) {
+		const Result = Reflect.apply(Target, ThisArg, Args)
+		if (ThisArg instanceof HTMLBodyElement) {
 			Win.dispatchEvent(NamuWikiUnloadedAdEvent)
-			return
 		}
-		return Reflect.apply(Target, ThisArg, Args)
+		return Result
 	}
 })
 
@@ -59,7 +58,7 @@ var HiddenElements: HTMLElement[] = []
 const HideElements = (TargetElements: HTMLElement[]) => {
 	HiddenElements.push(...TargetElements)
 	TargetElements.forEach(TargetElement => {
-		TargetElement.style.setProperty('display', 'none', 'important')
+		TargetElement.remove()
 	})
 }
 
@@ -90,6 +89,9 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 	})
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return !Array.from(HTMLElementInArticle.querySelectorAll('a[rel="noopener"][target="_blank"][class] > span ~ span')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('나무뉴스'))
+	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.querySelectorAll('*')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('실시간 검색어'))
 	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
