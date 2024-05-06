@@ -34,15 +34,22 @@ for (const SubStringFunction of SubString) {
 	})
 }
 
-Win.setInterval = new Proxy(Win.setInterval, {
-	apply(Target, ThisArg, Args) {
-		// eslint-disable-next-line @typescript-eslint/ban-types
-		if (typeof Args[0] === 'function' && /\(function {0,}\( {0,}\) {0,}{.+else {0,}return/.test((Args[0] as Function).toString())) {
-			return
+const Timer = ['setTimeout', 'setInterval']
+for (const TimerFunction of Timer) {
+	Win[TimerFunction] = new Proxy(Win[TimerFunction], {
+		apply(Target, ThisArg, Args) {
+			if (typeof Args[0] === 'function'
+			// eslint-disable-next-line @typescript-eslint/ban-types
+			&& (/return {0,}new {0,}Promise.+\.apply {0,}\(.+function.+next.+throw.+void/.test((Args[0] as Function).toString())
+			// eslint-disable-next-line @typescript-eslint/ban-types
+			|| /AM('|") {0,}: {0,}('|")PM.+('|")\$refs('|").+('|")style('|")/.test((Args[0] as Function).toString()))) {
+				return
+			}
+			console.debug(`[NamuLink:index]: ${TimerFunction}:`, Args)
+			return Reflect.apply(Target, ThisArg, Args)
 		}
-		return Reflect.apply(Target, ThisArg, Args)
-	}
-})
+	})
+}
 
 Win.Array.prototype.join = new Proxy(Win.Array.prototype.join, {
 	apply(Target, ThisArg, Args) {
