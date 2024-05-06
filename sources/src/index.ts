@@ -20,12 +20,25 @@ Win.Object.getOwnPropertyDescriptor = new Proxy(Win.Object.getOwnPropertyDescrip
 	}
 })
 
-Win.String.prototype.substr = new Proxy(Win.String.prototype.substr, {
+const SubString = ['substring', 'substr']
+for (const SubStringFunction of SubString) {
+	Win.String.prototype[SubStringFunction] = new Proxy(Win.String.prototype[SubStringFunction], {
+		apply(Target, ThisArg, Args) {
+			if (typeof ThisArg === 'string' && /^\[+.{0,10}#.{10,50}\/\/\/.{0,20}==/.test(ThisArg)) {
+				console.debug(`[NamuLink:index]: String.prototype.${SubStringFunction}:`, ThisArg)
+				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
+				return ''
+			}
+			return Reflect.apply(Target, ThisArg, Args)
+		}
+	})
+}
+
+Win.setInterval = new Proxy(Win.setInterval, {
 	apply(Target, ThisArg, Args) {
-		if (typeof ThisArg === 'string' && ThisArg.includes('//adcr.naver.com/')) {
-			console.debug('[NamuLink:index]: String.prototype.substr:', ThisArg)
-			Win.dispatchEvent(NamuWikiUnloadedAdEvent)
-			return ''
+		// eslint-disable-next-line @typescript-eslint/ban-types
+		if (typeof Args[0] === 'function' && /\(function {0,}\( {0,}\) {0,}{.+else {0,}return/.test((Args[0] as Function).toString())) {
+			return
 		}
 		return Reflect.apply(Target, ThisArg, Args)
 	}
