@@ -11,15 +11,6 @@ const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 const NamuWikiUnloadedAdEvent = new Event('namuwikiunloadedadvert')
 const NagivationEvent = new Event('namuwikinavigation')
 
-Win.Object.getOwnPropertyDescriptor = new Proxy(Win.Object.getOwnPropertyDescriptor, {
-	apply(Target, ThisArg, Args) {
-		if (typeof Args[1] === 'string' && (Args[1] === 'enable_ads' || Args[1] === 'to_duration')) {
-			return
-		}
-		return Reflect.apply(Target, ThisArg, Args)
-	}
-})
-
 const SubString = ['substring', 'substr']
 for (const SubStringFunction of SubString) {
 	Win.String.prototype[SubStringFunction] = new Proxy(Win.String.prototype[SubStringFunction], {
@@ -38,14 +29,15 @@ const Timer = ['setTimeout', 'setInterval']
 for (const TimerFunction of Timer) {
 	Win[TimerFunction] = new Proxy(Win[TimerFunction], {
 		apply(Target, ThisArg, Args) {
-			if (typeof Args[0] === 'function'
+			if (typeof Args[0] === 'function' && typeof Args[1] === 'number'
 			// eslint-disable-next-line @typescript-eslint/ban-types
 			&& (/return {0,}new {0,}Promise.+\.apply {0,}\(.+function.+next.+throw.+void/.test((Args[0] as Function).toString())
 			// eslint-disable-next-line @typescript-eslint/ban-types
-			|| /AM('|") {0,}: {0,}('|")PM.+('|")\$refs('|").+('|")style('|")/.test((Args[0] as Function).toString()))) {
+			|| /if {0,}\(('|")[a-zA-Z0-9_]+('|") {0,}===? {0,}.+return.+else/.test((Args[0] as Function).toString()))) {
+				console.debug(`[NamuLink:index]: ${TimerFunction}:`, Args)
+				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
 				return
 			}
-			console.debug(`[NamuLink:index]: ${TimerFunction}:`, Args)
 			return Reflect.apply(Target, ThisArg, Args)
 		}
 	})
