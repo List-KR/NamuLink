@@ -20,26 +20,14 @@ Win.Object.getOwnPropertyDescriptor = new Proxy(Win.Object.getOwnPropertyDescrip
 	}
 })
 
-Win.Element.prototype.getBoundingClientRect = new Proxy(Win.Element.prototype.getBoundingClientRect, {
+Win.String.prototype.substr = new Proxy(Win.String.prototype.substr, {
 	apply(Target, ThisArg, Args) {
-		const Result = Reflect.apply(Target, ThisArg, Args)
-		if (ThisArg instanceof HTMLBodyElement) {
+		if (typeof ThisArg === 'string' && ThisArg.includes('//adcr.naver.com/')) {
+			console.debug('[NamuLink:index]: String.prototype.substr:', ThisArg)
 			Win.dispatchEvent(NamuWikiUnloadedAdEvent)
+			return ''
 		}
-		return Result
-	}
-})
-
-Win.fetch = new Proxy(Win.fetch, {
-	async apply(Target, ThisArg, Args) {
-		const Result = Reflect.apply(Target, ThisArg, Args)
-		if (typeof Args[0] === 'string' && /^\/i\/[a-zA-Z0-9_-]{200,}/.test(Args[0]) && (Args[1] as RequestInit).method === 'GET') {
-			const ResultCloned = await (Result as Promise<Response>).then(Response => Response.clone())
-			if ((await ResultCloned.arrayBuffer()).byteLength > 1000) {
-				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
-			}
-		}
-		return Result
+		return Reflect.apply(Target, ThisArg, Args)
 	}
 })
 
