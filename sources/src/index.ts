@@ -33,7 +33,7 @@ for (const TimerFunction of Timer) {
 			// eslint-disable-next-line @typescript-eslint/ban-types
 			&& (/return {0,}new {0,}Promise.+\.apply {0,}\(.+function.+next.+throw.+void/.test((Args[0] as Function).toString())
 			// eslint-disable-next-line @typescript-eslint/ban-types
-			|| /AM('|") {0,}: {0,}('|")PM.+('|")\$refs('|").+('|")style('|")/.test((Args[0] as Function).toString()))) {
+			|| /if {0,}\(('|")[a-zA-Z0-9_]+('|") {0,}===? {0,}.+return.+else/.test((Args[0] as Function).toString()))) {
 				console.debug(`[NamuLink:index]: ${TimerFunction}:`, Args)
 				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
 				return
