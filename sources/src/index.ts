@@ -15,7 +15,7 @@ const SubString = ['substring', 'substr']
 for (const SubStringFunction of SubString) {
 	Win.String.prototype[SubStringFunction] = new Proxy(Win.String.prototype[SubStringFunction], {
 		apply(Target, ThisArg, Args) {
-			if (typeof ThisArg === 'string' && /^[a-zA-Z0-9_]+--?[a-zA-Z0-9_]+(-[a-zA-Z0-9_]+-[a-zA-Z0-9_]+)?$/.test(ThisArg)) {
+			if (typeof ThisArg === 'string' && /^[a-zA-Z0-9_]+--?[a-zA-Z0-9_]+(-[a-zA-Z0-9_]+-[a-zA-Z0-9_]+){0,}$/.test(ThisArg)) {
 				console.debug(`[NamuLink:index]: String.prototype.${SubStringFunction}:`, ThisArg)
 				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
 				return ''
@@ -27,6 +27,18 @@ for (const SubStringFunction of SubString) {
 		}
 	})
 }
+
+Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
+	apply(Target, ThisArg, Args) {
+		const Result = Reflect.apply(Target, ThisArg, Args)
+		if (typeof Result === 'string' && /^\[+.{0,10}#.{10,50}\/\/\/.{0,20}==/.test(Result)) {
+			console.debug('[NamuLink:index]: TextDecoder.prototype.decode', Result)
+			Win.dispatchEvent(NamuWikiUnloadedAdEvent)
+			return ''
+		}
+		return Result
+	}
+})
 
 const Timer = ['setTimeout', 'setInterval']
 for (const TimerFunction of Timer) {
