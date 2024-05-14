@@ -15,10 +15,13 @@ const SubString = ['substring', 'substr']
 for (const SubStringFunction of SubString) {
 	Win.String.prototype[SubStringFunction] = new Proxy(Win.String.prototype[SubStringFunction], {
 		apply(Target, ThisArg, Args) {
-			if (typeof ThisArg === 'string' && /^\[+.{0,10}#.{10,50}\/\/\/.{0,20}==/.test(ThisArg)) {
+			if (typeof ThisArg === 'string' && /^[a-zA-Z0-9_]+--?[a-zA-Z0-9_]+(-[a-zA-Z0-9_]+-[a-zA-Z0-9_]+)?$/.test(ThisArg)) {
 				console.debug(`[NamuLink:index]: String.prototype.${SubStringFunction}:`, ThisArg)
 				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
 				return ''
+			}
+			if (typeof ThisArg === 'string' && ThisArg === 'headAttrs') {
+				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
 			}
 			return Reflect.apply(Target, ThisArg, Args)
 		}
