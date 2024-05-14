@@ -18,7 +18,6 @@ for (const SubStringFunction of SubString) {
 			if (typeof ThisArg === 'string' && /^[a-zA-Z0-9_]+--?[a-zA-Z0-9_]+(-[a-zA-Z0-9_]+-[a-zA-Z0-9_]+){0,}$/.test(ThisArg)) {
 				console.debug(`[NamuLink:index]: String.prototype.${SubStringFunction}:`, ThisArg)
 				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
-				return ''
 			}
 			if (typeof ThisArg === 'string' && ThisArg === 'headAttrs') {
 				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
@@ -27,15 +26,6 @@ for (const SubStringFunction of SubString) {
 		}
 	})
 }
-
-Win.fetch = new Proxy(Win.fetch, {
-	apply(Target, ThisArg, Args) {
-		if (typeof Args[0] === 'string' && Args[0] === '/i/') {
-			return
-		}
-		return Reflect.apply(Target, ThisArg, Args)
-	}
-})
 
 Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 	apply(Target, ThisArg, Args) {
