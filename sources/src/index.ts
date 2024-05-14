@@ -28,6 +28,15 @@ for (const SubStringFunction of SubString) {
 	})
 }
 
+Win.fetch = new Proxy(Win.fetch, {
+	apply(Target, ThisArg, Args) {
+		if (typeof Args[0] === 'string' && Args[0] === '/i/') {
+			return
+		}
+		return Reflect.apply(Target, ThisArg, Args)
+	}
+})
+
 Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 	apply(Target, ThisArg, Args) {
 		const Result = Reflect.apply(Target, ThisArg, Args)
@@ -35,6 +44,18 @@ Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 			console.debug('[NamuLink:index]: TextDecoder.prototype.decode', Result)
 			Win.dispatchEvent(NamuWikiUnloadedAdEvent)
 			return ''
+		}
+		return Result
+	}
+})
+
+const DomainOrUrlRegex = new RegExp('^(?:[a-z0-9\\uAC00-\\uD7A3](?:[a-z0-9\\uAC00-\\uD7A3-]{0,61}[a-z0-9\\uAC00-\\uD7A3])?\\.)+[a-z0-9\\uAC00-\\uD7A3][a-z0-9\\uAC00-\\uD7A3-]{0,61}[a-z0-9\\uAC00-\\uD7A3](?:\\/[^\\s]*)?$|^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
+Win.String.prototype.replace = new Proxy(Win.String.prototype.replace, {
+	apply(Target, ThisArg, Args) {
+		const Result = Reflect.apply(Target, ThisArg, Args)
+		if (typeof Result === 'string' && DomainOrUrlRegex.test(Result) && new Error().stack.includes('espejo/vendor')) {
+			console.debug('[NamuLink:index]: String.prototype.replace', Result)
+			return
 		}
 		return Result
 	}
