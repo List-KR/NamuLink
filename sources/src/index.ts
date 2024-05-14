@@ -15,7 +15,7 @@ const SubString = ['substring', 'substr']
 for (const SubStringFunction of SubString) {
 	Win.String.prototype[SubStringFunction] = new Proxy(Win.String.prototype[SubStringFunction], {
 		apply(Target, ThisArg, Args) {
-			if (typeof ThisArg === 'string' && /^[a-zA-Z0-9_]+--?[a-zA-Z0-9_]+(-[a-zA-Z0-9_]+-[a-zA-Z0-9_]+)?$/.test(ThisArg)) {
+			if (typeof ThisArg === 'string' && /^[a-zA-Z0-9_]+--?[a-zA-Z0-9_]+(-[a-zA-Z0-9_]+-[a-zA-Z0-9_]+){0,}$/.test(ThisArg)) {
 				console.debug(`[NamuLink:index]: String.prototype.${SubStringFunction}:`, ThisArg)
 				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
 				return ''
