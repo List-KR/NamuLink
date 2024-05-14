@@ -28,6 +28,18 @@ for (const SubStringFunction of SubString) {
 	})
 }
 
+Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
+	apply(Target, ThisArg, Args) {
+		const Result = Reflect.apply(Target, ThisArg, Args)
+		if (typeof Result === 'string' && /^\[+.{0,10}#.{10,50}\/\/\/.{0,20}==/.test(Result)) {
+			console.debug('[NamuLink:index]: TextDecoder.prototype.decode', Result)
+			Win.dispatchEvent(NamuWikiUnloadedAdEvent)
+			return ''
+		}
+		return Result
+	}
+})
+
 const Timer = ['setTimeout', 'setInterval']
 for (const TimerFunction of Timer) {
 	Win[TimerFunction] = new Proxy(Win[TimerFunction], {
