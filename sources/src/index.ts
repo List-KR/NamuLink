@@ -9,6 +9,7 @@ declare const unsafeWindow: unsafeWindow
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
 const NamuWikiUnloadedAdEvent = new Event('namuwikiunloadedadvert')
+const NamuWikiLoadedAdEvent = new Event('namuwikiloadedadvert')
 const NagivationEvent = new Event('namuwikinavigation')
 
 const SubString = ['substring', 'substr']
@@ -34,18 +35,6 @@ Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 			console.debug('[NamuLink:index]: TextDecoder.prototype.decode', Result)
 			Win.dispatchEvent(NamuWikiUnloadedAdEvent)
 			return ''
-		}
-		return Result
-	}
-})
-
-const DomainOrUrlRegex = new RegExp('^(?:[a-z0-9\\uAC00-\\uD7A3](?:[a-z0-9\\uAC00-\\uD7A3-]{0,61}[a-z0-9\\uAC00-\\uD7A3])?\\.)+[a-z0-9\\uAC00-\\uD7A3][a-z0-9\\uAC00-\\uD7A3-]{0,61}[a-z0-9\\uAC00-\\uD7A3](?:\\/[^\\s]*)?$|^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
-Win.String.prototype.replace = new Proxy(Win.String.prototype.replace, {
-	apply(Target, ThisArg, Args) {
-		const Result = Reflect.apply(Target, ThisArg, Args)
-		if (typeof Result === 'string' && DomainOrUrlRegex.test(Result) && new Error().stack.includes('espejo/vendor')) {
-			console.debug('[NamuLink:index]: String.prototype.replace', Result)
-			return
 		}
 		return Result
 	}
@@ -155,7 +144,63 @@ const HideLeftoverElement = async () => {
 	HideElements(TargetedElements)
 }
 
-Win.addEventListener('namuwikiloadedadvert', HideLeftoverElement)
+let AdvertTarget: HTMLElement = null
+Win.EventTarget.prototype.addEventListener = new Proxy(Win.EventTarget.prototype.addEventListener, {
+	apply(Target, ThisArg, Args) {
+		if (typeof Args[1] === 'function' && Args[0] === 'click' && ThisArg instanceof HTMLElement
+			// eslint-disable-next-line @typescript-eslint/ban-types
+			&& (Args[1] as Function).toString().includes('t.currentTarget')
+			&& /^.+\..+$/.test(ThisArg.innerText.replaceAll(/[^a-zA-Z0-9\uAC00-\uD7A3./]+/gu, ''))) {
+			AdvertTarget = ThisArg
+			Win.dispatchEvent(NamuWikiLoadedAdEvent)
+		}
+		return Reflect.apply(Target, ThisArg, Args)
+	}
+})
+
+const HideAdElementNano = (ElementsInArticle: Element[]) => {
+	var FilteredElements = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
+	const TargetedElements: HTMLElement[] = []
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
+		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
+		return ChildHTMLElements.some(ChildElement => Number(getComputedStyle(ChildElement).getPropertyValue('margin-bottom').replace(/px$/, '')) >= 4)
+	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
+		return ChildElements.filter(ChildElement => ChildElement instanceof HTMLIFrameElement).length === 0
+	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return HTMLElementInArticle.querySelectorAll('span[id^="fn-"] + a[href^="#rfn-"]').length === 0
+	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.parentElement.querySelectorAll('span')).some(HTMLElement => HTMLElement.innerHTML.includes('실시간 검색어')) // NamuNews
+	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.querySelectorAll('*')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('실시간 검색어'))
+	})
+	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
+		return HTMLElementInArticle.contains(AdvertTarget)
+	}))
+	return TargetedElements
+}
+
+const HideAdElement = async () => {
+	const ElementsInArticle = []
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "]:has(span ~ ul li) ~ div div[class] > div[class] div[class] ~ div[class]')))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] div[class*=" "]')))
+	let TargetedElements: HTMLElement[] = []
+	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
+	const PLimitJobs: Promise<HTMLElement[]>[] = []
+	for (const ElementsInArticleChunk of SplitElementsIntoSubArrayLength(ElementsInArticle, {Count: 2})) {
+		PLimitJobs.push(PLimitInstance(() => HideAdElementNano(ElementsInArticleChunk)))
+	}
+	TargetedElements = await Promise.all(PLimitJobs).then(PLimitResults => PLimitResults.flat())
+	console.debug('[NamuLink:index]: HideLeftoverElement:', TargetedElements)
+	HideElements(TargetedElements)
+}
+
+Win.addEventListener('namuwikiloadedadvert', HideAdElement)
 Win.addEventListener('namuwikiunloadedadvert', HideLeftoverElement)
 Win.addEventListener('namuwikifristvisit', HideLeftoverElement)
 Win.addEventListener('namuwikinavigation', 	ShowElements)
