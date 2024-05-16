@@ -103,7 +103,7 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 		return HTMLElementInArticle.querySelectorAll('span[id^="fn-"] + a[href^="#rfn-"]').length === 0
 	})
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
-		return !Array.from(HTMLElementInArticle.querySelectorAll('a[rel="noopener"][target="_blank"][class] > span ~ span')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('나무뉴스'))
+		return !Array.from(HTMLElementInArticle.parentElement.querySelectorAll('span')).some(HTMLElement => HTMLElement.innerHTML.includes('실시간 검색어')) // NamuNews
 	})
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return !Array.from(HTMLElementInArticle.querySelectorAll('*')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('실시간 검색어'))
