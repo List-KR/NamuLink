@@ -149,7 +149,7 @@ Win.EventTarget.prototype.addEventListener = new Proxy(Win.EventTarget.prototype
 	apply(Target, ThisArg, Args) {
 		if (typeof Args[1] === 'function' && Args[0] === 'click' && ThisArg instanceof HTMLElement
 			// eslint-disable-next-line @typescript-eslint/ban-types
-			&& (Args[1] as Function).toString().includes('t.currentTarget')
+			&& (Args[1] as Function).toString().includes('currentTarget')
 			&& /^.+\..+$/.test(ThisArg.innerText.replaceAll(/[^a-zA-Z0-9\uAC00-\uD7A3./]+/gu, ''))) {
 			AdvertTarget = ThisArg
 			Win.dispatchEvent(NamuWikiLoadedAdEvent)
