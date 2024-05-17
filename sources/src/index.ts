@@ -12,21 +12,15 @@ const NamuWikiUnloadedAdEvent = new Event('namuwikiunloadedadvert')
 const NamuWikiLoadedAdEvent = new Event('namuwikiloadedadvert')
 const NagivationEvent = new Event('namuwikinavigation')
 
-const SubString = ['substring', 'substr']
-for (const SubStringFunction of SubString) {
-	Win.String.prototype[SubStringFunction] = new Proxy(Win.String.prototype[SubStringFunction], {
-		apply(Target, ThisArg, Args) {
-			if (typeof ThisArg === 'string' && /^[a-zA-Z0-9_]+--?[a-zA-Z0-9_]+(-[a-zA-Z0-9_]+-[a-zA-Z0-9_]+){0,}$/.test(ThisArg)) {
-				console.debug(`[NamuLink:index]: String.prototype.${SubStringFunction}:`, ThisArg)
-				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
-			}
-			if (typeof ThisArg === 'string' && ThisArg === 'headAttrs') {
-				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
-			}
-			return Reflect.apply(Target, ThisArg, Args)
+Win.String.prototype.indexOf = new Proxy(Win.String.prototype.indexOf, {
+	apply(Target, ThisArg, Args) {
+		const Result = Reflect.apply(Target, ThisArg, Args)
+		if (typeof Args[0] === 'string' && Args[0] === 'key') {
+			Win.dispatchEvent(NamuWikiUnloadedAdEvent)
 		}
-	})
-}
+		return Result
+	}
+})
 
 Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
 	apply(Target, ThisArg, Args) {
