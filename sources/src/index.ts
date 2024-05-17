@@ -10,59 +10,12 @@ const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
 const NamuWikiUnloadedAdEvent = new Event('namuwikiunloadedadvert')
 const NamuWikiLoadedAdEvent = new Event('namuwikiloadedadvert')
-const NagivationEvent = new Event('namuwikinavigation')
 
-const SubString = ['substring', 'substr']
-for (const SubStringFunction of SubString) {
-	Win.String.prototype[SubStringFunction] = new Proxy(Win.String.prototype[SubStringFunction], {
-		apply(Target, ThisArg, Args) {
-			if (typeof ThisArg === 'string' && /^[a-zA-Z0-9_]+--?[a-zA-Z0-9_]+(-[a-zA-Z0-9_]+-[a-zA-Z0-9_]+){0,}$/.test(ThisArg)) {
-				console.debug(`[NamuLink:index]: String.prototype.${SubStringFunction}:`, ThisArg)
-				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
-			}
-			if (typeof ThisArg === 'string' && ThisArg === 'headAttrs') {
-				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
-			}
-			return Reflect.apply(Target, ThisArg, Args)
-		}
-	})
-}
-
-Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
+Win.String.prototype.indexOf = new Proxy(Win.String.prototype.indexOf, {
 	apply(Target, ThisArg, Args) {
 		const Result = Reflect.apply(Target, ThisArg, Args)
-		if (typeof Result === 'string' && /^\[+.{0,10}#.{10,50}\/\/\/.{0,20}==/.test(Result)) {
-			console.debug('[NamuLink:index]: TextDecoder.prototype.decode', Result)
+		if (typeof Args[0] === 'string' && Args[0] === 'key') {
 			Win.dispatchEvent(NamuWikiUnloadedAdEvent)
-			return ''
-		}
-		return Result
-	}
-})
-
-const Timer = ['setTimeout', 'setInterval']
-for (const TimerFunction of Timer) {
-	Win[TimerFunction] = new Proxy(Win[TimerFunction], {
-		apply(Target, ThisArg, Args) {
-			if (typeof Args[0] === 'function' && typeof Args[1] === 'number'
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			&& (/return {0,}new {0,}Promise.+\.apply {0,}\(.+function.+next.+throw.+void/.test((Args[0] as Function).toString())
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			|| /if {0,}\(('|")[a-zA-Z0-9_]+('|") {0,}===? {0,}.+return.+else/.test((Args[0] as Function).toString()))) {
-				console.debug(`[NamuLink:index]: ${TimerFunction}:`, Args)
-				Win.dispatchEvent(NamuWikiUnloadedAdEvent)
-				return
-			}
-			return Reflect.apply(Target, ThisArg, Args)
-		}
-	})
-}
-
-Win.Array.prototype.join = new Proxy(Win.Array.prototype.join, {
-	apply(Target, ThisArg, Args) {
-		const Result = Reflect.apply(Target, ThisArg, Args)
-		if ((Result as string).startsWith('noscript[data-n-head="]')) {
-			Win.dispatchEvent(NagivationEvent)
 		}
 		return Result
 	}
