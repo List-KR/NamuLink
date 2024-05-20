@@ -138,6 +138,9 @@ const HideAdElementNano = (ElementsInArticle: Element[]) => {
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return !Array.from(HTMLElementInArticle.querySelectorAll('*')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('실시간 검색어'))
 	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.querySelectorAll('div[class*=" "] a:has(svg path)')).some(HTMLElement => Number(getComputedStyle(HTMLElement).getPropertyValue('margin-top').replace(/px$/, '')) > 10) // NamuNews Mobile
+	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		return HTMLElementInArticle.contains(AdvertTarget)
 	}))
