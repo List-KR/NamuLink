@@ -107,7 +107,9 @@ Win.EventTarget.prototype.addEventListener = new Proxy(Win.EventTarget.prototype
 			|| (/('|")X('|")\) {0,}&&/.test((Args[1] as Function).toString())
 			// eslint-disable-next-line @typescript-eslint/ban-types
 			&& /('|")Y('|")\) {0,}&&/.test((Args[1] as Function).toString())))
-			&& /^.+\..+$/.test(ThisArg.innerText.replaceAll(/[^a-zA-Z0-9\uAC00-\uD7A3./]+/gu, ''))) {
+			&& ThisArg.innerText.replaceAll(/[^a-zA-Z0-9\uAC00-\uD7A3./]+/gu, '').length <= 100
+			&& /^.+\..+$/.test(ThisArg.innerText.replaceAll(/[^a-zA-Z0-9\uAC00-\uD7A3./]+/gu, ''))
+			&& !/편집 권한이 부족합니다.+ACL 탭/.test(ThisArg.innerText)) {
 			AdvertTarget = ThisArg
 			Win.dispatchEvent(NamuWikiLoadedAdEvent)
 		}
