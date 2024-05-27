@@ -61,6 +61,9 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return !Array.from(HTMLElementInArticle.querySelectorAll('*')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('실시간 검색어'))
 	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.querySelectorAll('div[class*=" "] > *')).some(HTMLElement => (HTMLElement as HTMLElement).innerText.includes('분류'))
+	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
 		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
@@ -137,6 +140,9 @@ const HideAdElementNano = (ElementsInArticle: Element[]) => {
 	})
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return !Array.from(HTMLElementInArticle.querySelectorAll('*')).some(HTMLElement => (HTMLElement as HTMLElement).innerHTML.includes('실시간 검색어'))
+	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.querySelectorAll('div[class*=" "] > *')).some(HTMLElement => (HTMLElement as HTMLElement).innerText.includes('분류'))
 	})
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return !Array.from(HTMLElementInArticle.querySelectorAll('div[class*=" "] a:has(svg path)')).some(HTMLElement => Number(getComputedStyle(HTMLElement).getPropertyValue('margin-top').replace(/px$/, '')) > 10) // NamuNews Mobile
