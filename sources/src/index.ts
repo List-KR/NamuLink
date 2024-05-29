@@ -77,6 +77,9 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return !GetAllParentElements(HTMLElementInArticle).some(HTMLElement => HTMLElement.offsetWidth === document.body.offsetWidth && HTMLElement.offsetHeight < 200)
 	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.querySelectorAll('img[src*="image/svg"] ~ img[src] ~ noscript')).some(HTMLElement => HTMLElement.textContent.startsWith('<img'))
+	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
 		const ChildHTMLElements = ChildElements.filter(ChildElement => ChildElement instanceof HTMLElement) as HTMLElement[]
@@ -162,6 +165,9 @@ const HideAdElementNano = (ElementsInArticle: Element[]) => {
 	})
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return !Array.from(HTMLElementInArticle.querySelectorAll('div[class*=" "] a:has(svg path)')).some(HTMLElement => Number(getComputedStyle(HTMLElement).getPropertyValue('margin-top').replace(/px$/, '')) > 10) // NamuNews Mobile
+	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.querySelectorAll('img[src*="image/svg"] ~ img[src] ~ noscript')).some(HTMLElement => HTMLElement.textContent.startsWith('<img'))
 	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		return HTMLElementInArticle.contains(AdvertTarget)
