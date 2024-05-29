@@ -39,6 +39,16 @@ const ShowElements = () => {
 	HiddenElements = []
 }
 
+const GetAllParentElements = (TargetElement: HTMLElement) => {
+	const ParentElements: HTMLElement[] = []
+	let ParentElement = TargetElement.parentElement
+	while (ParentElement !== null) {
+		ParentElements.push(ParentElement)
+		ParentElement = ParentElement.parentElement
+	}
+	return ParentElements
+}
+
 const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 	var FilteredElements = ElementsInArticle.filter(ElementInArticle => ElementInArticle instanceof HTMLElement) as HTMLElement[]
 	const TargetedElements: HTMLElement[] = []
@@ -63,6 +73,12 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 	})
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return !Array.from(HTMLElementInArticle.querySelectorAll('div[class*=" "] > *')).some(HTMLElement => (HTMLElement as HTMLElement).innerText.includes('분류'))
+	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !GetAllParentElements(HTMLElementInArticle).some(HTMLElement => HTMLElement.offsetWidth === document.body.offsetWidth && HTMLElement.offsetHeight < 200)
+	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.querySelectorAll('img[src*="image/svg"] ~ img[src] ~ noscript')).some(HTMLElement => HTMLElement.textContent.startsWith('<img'))
 	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
@@ -145,7 +161,13 @@ const HideAdElementNano = (ElementsInArticle: Element[]) => {
 		return !Array.from(HTMLElementInArticle.querySelectorAll('div[class*=" "] > *')).some(HTMLElement => (HTMLElement as HTMLElement).innerText.includes('분류'))
 	})
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !GetAllParentElements(HTMLElementInArticle).some(HTMLElement => HTMLElement.offsetWidth === document.body.offsetWidth && HTMLElement.offsetHeight < 200)
+	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
 		return !Array.from(HTMLElementInArticle.querySelectorAll('div[class*=" "] a:has(svg path)')).some(HTMLElement => Number(getComputedStyle(HTMLElement).getPropertyValue('margin-top').replace(/px$/, '')) > 10) // NamuNews Mobile
+	})
+	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
+		return !Array.from(HTMLElementInArticle.querySelectorAll('img[src*="image/svg"] ~ img[src] ~ noscript')).some(HTMLElement => HTMLElement.textContent.startsWith('<img'))
 	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		return HTMLElementInArticle.contains(AdvertTarget)
