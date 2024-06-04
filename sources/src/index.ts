@@ -90,7 +90,7 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 		return HTMLElementInArticle.querySelectorAll('div[class] blockquote[class^="_"]').length === 0
 	})
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
-		return HTMLElementInArticle.querySelectorAll('ul > li > a[href^="/thread/]').length === 0
+		return HTMLElementInArticle.querySelectorAll('ul > li > a[href^="/thread/]').length === 0 && !location.pathname.startsWith('/discuss/')
 	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		const ChildElements = Array.from(HTMLElementInArticle.querySelectorAll('*'))
@@ -191,7 +191,7 @@ const HideAdElementNano = (ElementsInArticle: Element[]) => {
 		return HTMLElementInArticle.querySelectorAll('div[class] blockquote[class^="_"]').length === 0
 	})
 	FilteredElements = FilteredElements.filter(HTMLElementInArticle => {
-		return HTMLElementInArticle.querySelectorAll('ul > li > a[href^="/thread/]').length === 0
+		return HTMLElementInArticle.querySelectorAll('ul > li > a[href^="/thread/]').length === 0 && !location.pathname.startsWith('/discuss/')
 	})
 	TargetedElements.push(...FilteredElements.filter(HTMLElementInArticle => {
 		return HTMLElementInArticle.contains(AdvertTarget)
