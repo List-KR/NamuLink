@@ -115,7 +115,7 @@ const HideLeftoverElementNano = (ElementsInArticle: Element[]) => {
 
 const HideLeftoverElement = async () => {
 	const ElementsInArticle = []
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "] ~ div div[class] > div[class] div[class] ~ div[class]')))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "]:has(span ~ ul li) ~ div div[class] > div[class] div[class] ~ div[class]')))
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] div[class*=" "]')))
 	let TargetedElements: HTMLElement[] = []
 	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
@@ -201,7 +201,7 @@ const HideAdElementNano = (ElementsInArticle: Element[]) => {
 
 const HideAdElement = async () => {
 	const ElementsInArticle = []
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "] ~ div div[class] > div[class] div[class] ~ div[class]')))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "]:has(span ~ ul li) ~ div div[class] > div[class] div[class] ~ div[class]')))
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] div[class*=" "]')))
 	let TargetedElements: HTMLElement[] = []
 	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
