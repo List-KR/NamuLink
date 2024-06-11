@@ -18,11 +18,13 @@ const RemoveElements = (TargetElements: HTMLElement[]) => {
 const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[] => {
 	let TargetedElements: HTMLElement[] = []
 	TargetedElements = SearchedElements.filter(TargetedElement => {
-		return Number(getComputedStyle(TargetedElement).getPropertyValue('margin-top').replace('px', '')) > 20
-		|| (Number(getComputedStyle(TargetedElement).getPropertyValue('').replace('padding-left', '')) > 5
-		&& Number(getComputedStyle(TargetedElement).getPropertyValue('').replace('padding-top', '')) > 5
-		&& Number(getComputedStyle(TargetedElement).getPropertyValue('').replace('padding-right', '')) > 5
-		&& Number(getComputedStyle(TargetedElement).getPropertyValue('').replace('padding-bottom', '')) > 5)
+		return Number(getComputedStyle(TargetedElement).getPropertyValue('margin-top').replace('px', '')) > 10
+		|| (Array.from(TargetedElement.children).some(Children => {
+			return Number(getComputedStyle(Children).getPropertyValue('padding-left').replace('px', '')) > 5
+			&& Number(getComputedStyle(Children).getPropertyValue('padding-top').replace('px', '')) > 5
+			&& Number(getComputedStyle(Children).getPropertyValue('padding-right').replace('px', '')) > 5
+			&& Number(getComputedStyle(Children).getPropertyValue('padding-bottom').replace('px', '')) > 5
+		}))
 	})
 	TargetedElements = TargetedElements.filter(SearchedElement => {
 		return Array.from(SearchedElement.querySelectorAll('a,span')).filter(HTMLInElement => {
