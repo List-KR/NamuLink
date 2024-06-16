@@ -27,7 +27,7 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 		}))
 	})
 	TargetedElements = TargetedElements.filter(SearchedElement => {
-		return Array.from(SearchedElement.querySelectorAll('a,span')).filter(HTMLInElement => {
+		return Array.from(SearchedElement.querySelectorAll('a,span,div')).filter(HTMLInElement => {
 			return HTMLInElement instanceof HTMLElement
 			// eslint-disable-next-line no-irregular-whitespace
 			&& IsValidDomain((HTMLInElement.innerText.replaceAll(/​ /g, '').match(/^[^/]+(?=\/)?/g) ?? [''])[0], { allowUnicode: true, subdomain: true }) // Zero width space and space should be removed.
@@ -35,6 +35,12 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 		|| Array.from(SearchedElement.querySelectorAll('*')).filter(HTMLInElement => {
 			return HTMLInElement instanceof HTMLElement && getComputedStyle(HTMLInElement).getPropertyValue('animation-duration') === '1.5s'
 		}).length >= 4
+	})
+	TargetedElements = TargetedElements.filter(SearchedElement => {
+		return Array.from(SearchedElement.querySelectorAll('*[href^="/RecentChanges"]')).filter(HTMLInElement => {
+			return Number(getComputedStyle(HTMLInElement).getPropertyValue('width').replaceAll('px', '')) > 50
+			&& Number(getComputedStyle(HTMLInElement).getPropertyValue('height').replaceAll('px', '')) > 10
+		}).length === 0
 	})
 	return TargetedElements
 }
