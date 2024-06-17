@@ -42,6 +42,12 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 			&& Number(getComputedStyle(HTMLInElement).getPropertyValue('height').replaceAll('px', '')) > 10
 		}).length === 0
 	})
+	TargetedElements = TargetedElements.filter(SearchedElement => {
+		return Array.from(SearchedElement.querySelectorAll('*[href^="#fn-"]')).filter(HTMLInElement => {
+			// eslint-disable-next-line no-irregular-whitespace
+			return HTMLInElement instanceof HTMLElement && /\[[0-9]+\]/.test(HTMLInElement.innerText.replaceAll(/​ /g, '')) // Zero width space and space should be removed.
+		}).length === 0
+	})
 	return TargetedElements
 }
 
