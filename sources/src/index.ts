@@ -48,6 +48,11 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 			return HTMLInElement instanceof HTMLElement && /\[[0-9]+\]/.test(HTMLInElement.innerText.replaceAll(/​ /g, '')) // Zero width space and space should be removed.
 		}).length === 0
 	})
+	TargetedElements = TargetedElements.filter(SearchedElement => {
+		return Array.from(SearchedElement.querySelectorAll('*[href]')).filter(HTMLInElement => {
+			return getComputedStyle(HTMLInElement, 'before').getPropertyValue('font-family') === 'Ionicons'
+		}).length === 0
+	})
 	return TargetedElements
 }
 
