@@ -34,7 +34,7 @@
     "@types/node": "^20.12.12",
     "is-valid-domain": "^0.1.6",
     "multithread-array": "^2.0.0",
-    "p-limit": "^5.0.0"
+    "p-limit": "^6.1.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.1.1",
