@@ -53,6 +53,9 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 			return getComputedStyle(HTMLInElement, 'before').getPropertyValue('font-family') === 'Ionicons'
 		}).length === 0
 	})
+	TargetedElements = TargetedElements.filter(SearchedElement => {
+		return Array.from(SearchedElement.querySelectorAll('*:not(:has(div[class^="_"] > br ~ * span ~ span))')).length === 0
+	})
 	return TargetedElements
 }
 
