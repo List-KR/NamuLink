@@ -54,7 +54,7 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 		}).length === 0
 	})
 	TargetedElements = TargetedElements.filter(SearchedElement => {
-		return Array.from(SearchedElement.querySelectorAll('*:not(:has(div[class^="_"] > br ~ * span ~ span))')).length === 0
+		return Array.from(SearchedElement.querySelectorAll('*')).every(HTMLInElement => !/목차/.test(getComputedStyle(HTMLInElement, 'before').getPropertyValue('content')))
 	})
 	return TargetedElements
 }
