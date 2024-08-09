@@ -62,7 +62,8 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 const RemovePowerLinkAd = async () => {
 	const ElementsInArticle = []
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "]:has(span ~ ul li) ~ div div[class] > div[class] div[class] ~ *[class]')))
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] *[class*=" "]')))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] *[class*=" "]:not(:has(svg[viewBox="0 0 20 20"]))')))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class*=" "] > div[class*=" "]:has(span ~ ul li) ~ div[class*=" "] > div[class]')))
 	let TargetedElements: HTMLElement[] = []
 	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
 	const PLimitJobs: Promise<HTMLElement[]>[] = []
