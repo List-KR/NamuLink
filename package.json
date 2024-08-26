@@ -31,7 +31,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^20.14.10",
+    "@types/node": "^22.5.0",
     "is-valid-domain": "^0.1.6",
     "multithread-array": "^2.0.0",
     "p-limit": "^6.1.0"
