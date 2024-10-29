@@ -3,15 +3,14 @@ import PLimit from 'p-limit'
 import {SplitElementsIntoSubArrayLength} from 'multithread-array'
 
 type unsafeWindow = typeof window
-// eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention
+// eslint-disable-next-line @typescript-eslint/naming-convention
 declare const unsafeWindow: unsafeWindow
 
-// eslint-disable-next-line no-negated-condition
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
 const RemoveElements = (TargetElements: HTMLElement[]) => {
 	TargetElements.forEach(TargetElement => {
-		TargetElement.remove()
+		TargetElement.setAttribute('style', 'visibility: hidden !important; width: 1px !important; height: 1px !important;')
 	})
 }
 
@@ -29,7 +28,6 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 	TargetedElements = TargetedElements.filter(SearchedElement => {
 		return Array.from(SearchedElement.querySelectorAll('a,span,div')).filter(HTMLInElement => {
 			return HTMLInElement instanceof HTMLElement
-			// eslint-disable-next-line no-irregular-whitespace
 			&& IsValidDomain((HTMLInElement.innerText.replaceAll(/​ /g, '').match(/^[^/]+(?=\/)?/g) ?? [''])[0], { allowUnicode: true, subdomain: true }) // Zero width space and space should be removed.
 		}).length >= 2
 		|| Array.from(SearchedElement.querySelectorAll('*')).filter(HTMLInElement => {
@@ -44,7 +42,6 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 	})
 	TargetedElements = TargetedElements.filter(SearchedElement => {
 		return Array.from(SearchedElement.querySelectorAll('*[href^="#fn-"]')).filter(HTMLInElement => {
-			// eslint-disable-next-line no-irregular-whitespace
 			return HTMLInElement instanceof HTMLElement && /\[[0-9]+\]/.test(HTMLInElement.innerText.replaceAll(/​ /g, '')) // Zero width space and space should be removed.
 		}).length === 0
 	})
