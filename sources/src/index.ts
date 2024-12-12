@@ -56,6 +56,9 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 			|| /목차/.test(getComputedStyle(HTMLInElement, '::before').getPropertyValue('content')))
 		)
 	})
+	TargetedElements = TargetedElements.filter(SearchedElement => {
+		return !SearchedElement.textContent.includes('https://board.namu.wiki/b/')
+	})
 	return TargetedElements
 }
 
@@ -64,6 +67,7 @@ const RemovePowerLinkAd = async () => {
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "]:has(span ~ ul li) ~ div div[class] > div[class] div[class] ~ *[class]')))
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] *[class*=" "]:not(:has(svg[viewBox="0 0 20 20"]))')))
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class*=" "] > div[class*=" "]:has(span ~ ul li) ~ div[class*=" "] > div[class]')))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[onmouseover][onmouseout] ~ div[class*=" "] > div[style]')))
 	let TargetedElements: HTMLElement[] = []
 	const PLimitInstance = PLimit((navigator.hardwareConcurrency ?? 4) < 4 ? 4 : navigator.hardwareConcurrency)
 	const PLimitJobs: Promise<HTMLElement[]>[] = []
