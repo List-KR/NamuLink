@@ -62,6 +62,9 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 	TargetedElements = TargetedElements.filter(SearchedElement => {
 		return !SearchedElement.textContent.includes('https://board.namu.wiki/b/')
 	})
+	TargetedElements = TargetedElements.filter(SearchedElement => {
+		return !SearchedElement.textContent.includes('이 사용자는 특수 권한을 가지고 있습니다')
+	})
 	return TargetedElements
 }
 
