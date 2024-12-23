@@ -57,6 +57,9 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 		)
 	})
 	TargetedElements = TargetedElements.filter(SearchedElement => {
+		return Array.from(SearchedElement.querySelectorAll('img[alt^="파일:"]')).length < 1
+	})
+	TargetedElements = TargetedElements.filter(SearchedElement => {
 		return !SearchedElement.textContent.includes('https://board.namu.wiki/b/')
 	})
 	return TargetedElements
@@ -65,7 +68,7 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 const RemovePowerLinkAd = async () => {
 	const ElementsInArticle = []
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class] div[class*=" "]:has(span ~ ul li) ~ div div[class] > div[class] div[class] ~ *[class]')))
-	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] *[class*=" "]:not(:has(svg[viewBox="0 0 20 20"]))')))
+	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div:not([class*=" "]) div[class] *[class]:not(:has(svg[viewBox="0 0 20 20"]))')))
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[class*=" "] > div[class*=" "]:has(span ~ ul li) ~ div[class*=" "] > div[class]')))
 	ElementsInArticle.push(...Array.from(Win.document.querySelectorAll('div[onmouseover][onmouseout] ~ div[class*=" "] > div[style]')))
 	let TargetedElements: HTMLElement[] = []
