@@ -82,6 +82,6 @@ const RemovePowerLinkAd = async () => {
 	RemoveElements(TargetedElements)
 }
 
-if (location.hostname !== 'board.namu.wiki') {
+if (location.hostname !== 'board.namu.wiki' && !location.pathname.startsWith('/RecentDiscuss')) {
 	setInterval(RemovePowerLinkAd, 1500)
 }
