@@ -65,6 +65,12 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 	TargetedElements = TargetedElements.filter(SearchedElement => {
 		return !SearchedElement.textContent.includes('이 사용자는 특수 권한을 가지고 있습니다')
 	})
+	TargetedElements = TargetedElements.filter(SearchedElement => {
+		return Array.from(SearchedElement.querySelectorAll('a[href="/RecentChanges"]')).length < 1
+	})
+	TargetedElements = TargetedElements.filter(SearchedElement => {
+		return Array.from(SearchedElement.querySelectorAll('> a[href="#"][class]')).length < 1
+	})
 	return TargetedElements
 }
 
