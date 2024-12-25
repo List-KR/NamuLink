@@ -69,7 +69,7 @@ const RemovePowerLinkAdWorker = (SearchedElements: HTMLElement[]): HTMLElement[]
 		return Array.from(SearchedElement.querySelectorAll('a[href="/RecentChanges"]')).length < 1
 	})
 	TargetedElements = TargetedElements.filter(SearchedElement => {
-		return Array.from(SearchedElement.querySelectorAll('> a[href="#"][class]')).length < 1
+		return Array.from(SearchedElement.querySelectorAll('a[href="#"][class]')).length < 1
 	})
 	return TargetedElements
 }
