@@ -8,7 +8,7 @@ Win.Proxy = new Proxy(Win.Proxy, {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 	construct<T extends object>(Target: ProxyConstructor, Args: [T, ProxyHandler<T>], NewTarget: Function): object {
 		if (typeof Args[0] === 'object' && Array.isArray(Args[0]) && typeof Args[0][0] === 'object' && Array.isArray(Args[0][0])
-		&& typeof Args[0][0][1] === 'string' && /^#x=[A-Za-z0-9-+]+\/\/\/.+=?$/.test(Args[0][0][1])) {
+		&& typeof Args[0][0][1] === 'string' && /^#x=[A-Za-z0-9-+]+\/\/\/.+=?/.test(Args[0][0][1])) {
 			setTimeout(() => {
 				Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter((TargetEle: HTMLElement) => {
 					return TargetEle.innerText === '' && Array.from(TargetEle.querySelectorAll('*')).filter((ChildEle: HTMLElement) => {
