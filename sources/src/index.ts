@@ -17,7 +17,7 @@ Win.Proxy = new Proxy(Win.Proxy, {
 				}).forEach((TargetEle: HTMLElement) => {
 					TargetEle.setAttribute('style', 'visibility: hidden !important; width: 1px !important; height: 1px !important;')
 				})
-			}, 2000)
+			}, 5000)
 			return
 		}
 		return Reflect.construct(Target, Args, NewTarget)
