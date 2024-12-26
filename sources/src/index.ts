@@ -9,7 +9,7 @@ let HideLeftover = () => {
 		Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter((TargetEle: HTMLElement) => {
 			return (TargetEle.innerText === '' || TargetEle.innerText.includes('파워링크')) &&
 			(Number(getComputedStyle(TargetEle).getPropertyValue('margin-top').replace('px', '')) > 10 || Number(getComputedStyle(TargetEle).getPropertyValue('margin-bottom').replace('px', '')) > 10) &&
-			Number(getComputedStyle(TargetEle).getPropertyValue('height').replace('px', '')) < 250
+			Number(getComputedStyle(TargetEle).getPropertyValue('height').replace('px', '')) < 350
 		}).forEach((TargetEle: HTMLElement) => {
 			TargetEle.setAttribute('style', 'visibility: hidden !important; width: 1px !important; height: 1px !important;')
 		})
