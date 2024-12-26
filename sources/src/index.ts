@@ -7,11 +7,12 @@ const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 let HideLeftover = () => {
 	setInterval(() => {
 		Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter((TargetEle: HTMLElement) => {
-			return (TargetEle.innerText === '' || TargetEle.innerText.includes('파워링크')) && Number(getComputedStyle(TargetEle).getPropertyValue('margin-top').replace('px', '')) > 15
+			return (TargetEle.innerText === '' || TargetEle.innerText.includes('파워링크')) &&
+			(Number(getComputedStyle(TargetEle).getPropertyValue('margin-top').replace('px', '')) > 15 || Number(getComputedStyle(TargetEle).getPropertyValue('margin-bottom').replace('px', '')) > 15)
 		}).forEach((TargetEle: HTMLElement) => {
 			TargetEle.setAttribute('style', 'visibility: hidden !important; width: 1px !important; height: 1px !important;')
 		})
-	}, 5000)
+	}, 2500)
 }
 
 let RegExPatterns: RegExp[] = [
