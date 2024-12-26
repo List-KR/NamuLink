@@ -4,20 +4,31 @@ declare const unsafeWindow: unsafeWindow
 
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
+let HideLeftover = () => {
+	setInterval(() => {
+		Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter((TargetEle: HTMLElement) => {
+			return TargetEle.innerText === '' && Number(getComputedStyle(TargetEle).getPropertyValue('margin-top').replace('px', '')) > 15
+		}).forEach((TargetEle: HTMLElement) => {
+			TargetEle.setAttribute('style', 'visibility: hidden !important; width: 1px !important; height: 1px !important;')
+		})
+	}, 5000)
+}
+
+let RegExPatterns: RegExp[] = [
+	/^#x=[A-Za-z0-9-+]+\/\/\/.+=?$/,
+	/^[A-Za-z0-9+]+\/{3,}w=+/
+]
+
 Win.Proxy = new Proxy(Win.Proxy, {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 	construct<T extends object>(Target: ProxyConstructor, Args: [T, ProxyHandler<T>], NewTarget: Function): object {
 		if (typeof Args[0] === 'object' && Array.isArray(Args[0]) && typeof Args[0][0] === 'object' && Array.isArray(Args[0][0])
-		&& typeof Args[0][0][1] === 'string' && /^[A-Za-z0-9-+]+\/\/\/.+=?/.test(Args[0][0][1])) {
-			setTimeout(() => {
-				Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter((TargetEle: HTMLElement) => {
-					return TargetEle.innerText === '' && Array.from(TargetEle.querySelectorAll('*')).filter((ChildEle: HTMLElement) => {
-						return getComputedStyle(ChildEle).getPropertyValue('animation').includes('infinite')
-					}).length >= 6
-				}).forEach((TargetEle: HTMLElement) => {
-					TargetEle.setAttribute('style', 'visibility: hidden !important; width: 1px !important; height: 1px !important;')
-				})
-			}, 5000)
+		&& typeof Args[0][0][1] === 'string' && RegExPatterns.some((Pattern: RegExp) => Pattern.test(Args[0][0][1]))) {
+			HideLeftover()
+			return
+		}
+		if (typeof Args[0] === 'object' && Object.keys(Args[0]).some((Key: string) => RegExPatterns.some((Pattern: RegExp) => Pattern.test(Args[0][Key])))) {
+			HideLeftover()
 			return
 		}
 		return Reflect.construct(Target, Args, NewTarget)
