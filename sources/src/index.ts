@@ -18,7 +18,7 @@ let HideLeftover = () => {
 
 let RegExPatterns: RegExp[] = [
 	/^#x=[A-Za-z0-9-+]+\/\/\/.+=?$/,
-	/^[A-Za-z0-9+]+\/{3,}w=+/
+	/^[A-Za-z0-9+\/]+\/{3,}w=+/
 ]
 
 Win.Proxy = new Proxy(Win.Proxy, {
