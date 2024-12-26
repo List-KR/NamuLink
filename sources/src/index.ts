@@ -28,7 +28,7 @@ Win.Proxy = new Proxy(Win.Proxy, {
 			HideLeftover()
 			return {}
 		}
-		if (typeof Args[0] === 'object' && Object.keys(Args[0]).some((Key: string) => RegExPatterns.some((Pattern: RegExp) => Pattern.test(Args[0][Key])))) {
+		if (typeof Args[0] === 'object' && Object.keys(Args[0]).some((Key: string) => RegExPatterns.some((Pattern: RegExp) => typeof Args[0][Key] === 'string' && Pattern.test(Args[0][Key])))) {
 			HideLeftover()
 			return {}
 		}
