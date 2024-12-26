@@ -26,11 +26,11 @@ Win.Proxy = new Proxy(Win.Proxy, {
 		if (typeof Args[0] === 'object' && Array.isArray(Args[0]) && typeof Args[0][0] === 'object' && Array.isArray(Args[0][0])
 		&& typeof Args[0][0][1] === 'string' && RegExPatterns.some((Pattern: RegExp) => Pattern.test(Args[0][0][1]))) {
 			HideLeftover()
-			return
+			return {}
 		}
 		if (typeof Args[0] === 'object' && Object.keys(Args[0]).some((Key: string) => RegExPatterns.some((Pattern: RegExp) => Pattern.test(Args[0][Key])))) {
 			HideLeftover()
-			return
+			return {}
 		}
 		return Reflect.construct(Target, Args, NewTarget)
 	}
