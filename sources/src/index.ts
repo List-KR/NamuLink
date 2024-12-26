@@ -27,11 +27,17 @@ Win.Proxy = new Proxy(Win.Proxy, {
 		if (typeof Args[0] === 'object' && Array.isArray(Args[0]) && typeof Args[0][0] === 'object' && Array.isArray(Args[0][0])
 		&& typeof Args[0][0][1] === 'string' && RegExPatterns.some((Pattern: RegExp) => Pattern.test(Args[0][0][1]))) {
 			HideLeftover()
-			return {}
+			return Reflect.construct(Target, [Args[0], ['a///w==b']], NewTarget)
 		}
 		if (typeof Args[0] === 'object' && Object.keys(Args[0]).some((Key: string) => RegExPatterns.some((Pattern: RegExp) => typeof Args[0][Key] === 'string' && Pattern.test(Args[0][Key])))) {
 			HideLeftover()
-			return {}
+			let ArgsObj = Args[0]
+			Object.keys(ArgsObj).map((Key: string) => {
+				if (typeof ArgsObj[Key] === 'string') {
+					ArgsObj[Key] = ArgsObj[Key].split('').reverse().join('') + 'a///w==b'
+				}
+			})
+			return Reflect.construct(Target, [Args[0], ArgsObj], NewTarget)
 		}
 		return Reflect.construct(Target, Args, NewTarget)
 	}
