@@ -52,7 +52,7 @@ Win.Proxy = new Proxy(Win.Proxy, {
 			Object.keys(Args[0]).forEach((Key: string) => {
 				switch (typeof Args[0][Key]) {
 					case 'string':
-						if (Args[0][Key].length > 10) {
+						if (Args[0][Key].length > 5) {
 							TensorResult[0]++
 						}
 						break
@@ -65,12 +65,11 @@ Win.Proxy = new Proxy(Win.Proxy, {
 				}
 			})
 		}
-		if (TensorResult.every((Result) => Result >= 3)) {
+		if (TensorResult.every((Result) => Result >= 3) && typeof Args[0]['content'] !== 'object') {
 			HideLeftover()
 			return Reflect.construct(Target, [Args[0], ['파워링크']], NewTarget)
 		}
 		//
-
 		return Reflect.construct(Target, Args, NewTarget)
 	}
 })
