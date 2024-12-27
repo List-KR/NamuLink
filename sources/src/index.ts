@@ -7,7 +7,9 @@ const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 let HideLeftover = () => {
 	setInterval(() => {
 		Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter((TargetEle: HTMLElement) => {
-			return (TargetEle.innerText === '' || TargetEle.innerText.includes('파워링크')) &&
+			return (Array.from(TargetEle.querySelectorAll('*')).filter((ChildEle: HTMLElement) => {
+				return getComputedStyle(ChildEle).getPropertyValue('animation').includes('infinite')
+				}).length >= 6 || TargetEle.innerText === '' || TargetEle.innerText.includes('파워링크')) &&
 			(Number(getComputedStyle(TargetEle).getPropertyValue('margin-top').replace('px', '')) > 10 || Number(getComputedStyle(TargetEle).getPropertyValue('margin-bottom').replace('px', '')) > 10) &&
 			Number(getComputedStyle(TargetEle).getPropertyValue('height').replace('px', '')) < 350
 		}).forEach((TargetEle: HTMLElement) => {
@@ -39,6 +41,34 @@ Win.Proxy = new Proxy(Win.Proxy, {
 			})
 			return Reflect.construct(Target, [Args[0], ArgsObj], NewTarget)
 		}
+		if (typeof Args[0] === 'object' && Object.keys(Args[0]).some((Key: string) => typeof Args[0][Key] === 'string' && Args[0][Key].includes('searchad.naver.com'))) {
+			HideLeftover()
+			return
+		}
+		
+		// Object inner section analysis
+		let TensorResult: Array<number> = [0, 0, 0] // string, number, boolean
+		if (typeof Args[0] === 'object') {
+			Object.keys(Args[0]).forEach((Key: string) => {
+				switch (typeof Args[0][Key]) {
+					case 'string':
+						TensorResult[0]++
+						break
+					case 'number':
+						TensorResult[1]++
+						break
+					case 'boolean':
+						TensorResult[2]++
+						break
+				}
+			})
+		}
+		if (TensorResult.every((Result) => Result >= 3)) {
+			HideLeftover()
+			return
+		}
+		//
+
 		return Reflect.construct(Target, Args, NewTarget)
 	}
 })
