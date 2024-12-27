@@ -65,7 +65,7 @@ Win.Proxy = new Proxy(Win.Proxy, {
 		}
 		if (TensorResult.every((Result) => Result >= 3)) {
 			HideLeftover()
-			return {}
+			return Reflect.construct(Target, [Args[0], ['파워링크']], NewTarget)
 		}
 		//
 
