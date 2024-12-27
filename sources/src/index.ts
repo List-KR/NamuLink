@@ -73,3 +73,31 @@ Win.Proxy = new Proxy(Win.Proxy, {
 		return Reflect.construct(Target, Args, NewTarget)
 	}
 })
+
+Win.Object.prototype.toString = new Proxy(Win.Object.prototype.toString, {
+	apply(Target: typeof Object.prototype.toString, ThisArg: unknown, Args: []) {
+		let TensorResult: Array<number> = [0, 0, 0] // string, number, boolean
+		if (typeof ThisArg === 'object') {
+			Object.keys(ThisArg).forEach((Key: string) => {
+				switch (typeof ThisArg[Key]) {
+					case 'string':
+						if (ThisArg[Key].length > 5) {
+							TensorResult[0]++
+						}
+						break
+					case 'number':
+						TensorResult[1]++
+						break
+					case 'boolean':
+						TensorResult[2]++
+						break
+				}
+			})
+		}
+		if (TensorResult.every((Result) => Result >= 3) && typeof ThisArg['content'] !== 'object') {
+			HideLeftover()
+			throw new Error()
+		}
+		return Reflect.apply(Target, ThisArg, Args)
+	}
+})
