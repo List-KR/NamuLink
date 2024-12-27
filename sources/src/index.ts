@@ -52,7 +52,9 @@ Win.Proxy = new Proxy(Win.Proxy, {
 			Object.keys(Args[0]).forEach((Key: string) => {
 				switch (typeof Args[0][Key]) {
 					case 'string':
-						TensorResult[0]++
+						if (Args[0][Key].length > 10) {
+							TensorResult[0]++
+						}
 						break
 					case 'number':
 						TensorResult[1]++
@@ -65,6 +67,7 @@ Win.Proxy = new Proxy(Win.Proxy, {
 		}
 		if (TensorResult.every((Result) => Result >= 3)) {
 			HideLeftover()
+			console.debug(Args[0])
 			return Reflect.construct(Target, [Args[0], ['파워링크']], NewTarget)
 		}
 		//
