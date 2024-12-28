@@ -41,7 +41,8 @@ Win.Proxy = new Proxy(Win.Proxy, {
 			})
 			return Reflect.construct(Target, [Args[0], ArgsObj], NewTarget)
 		}
-		if (typeof Args[0] === 'object' && Object.keys(Args[0]).some((Key: string) => typeof Args[0][Key] === 'string' && Args[0][Key].includes('searchad.naver.com'))) {
+		if (typeof Args[0] === 'object' && Object.keys(Args[0]).some((Key: string) => typeof Args[0][Key] === 'string' &&
+			(Args[0][Key].includes('searchad.naver.com') || Args[0][Key].includes('saedu.naver.com/adbiz/')))) {
 			HideLeftover()
 			return
 		}
@@ -98,6 +99,7 @@ Win.Object.prototype.toString = new Proxy(Win.Object.prototype.toString, {
 			HideLeftover()
 			return []
 		}
+		console.debug(ThisArg)
 		return Reflect.apply(Target, ThisArg, Args)
 	}
 })
