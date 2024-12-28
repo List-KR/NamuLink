@@ -96,7 +96,7 @@ Win.Object.prototype.toString = new Proxy(Win.Object.prototype.toString, {
 		}
 		if (TensorResult.every((Result) => Result >= 3) && typeof ThisArg['content'] !== 'object') {
 			HideLeftover()
-			throw new Error()
+			return []
 		}
 		return Reflect.apply(Target, ThisArg, Args)
 	}
