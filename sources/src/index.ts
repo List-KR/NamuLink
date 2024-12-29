@@ -99,7 +99,6 @@ Win.Object.prototype.toString = new Proxy(Win.Object.prototype.toString, {
 			HideLeftover()
 			return []
 		}
-		console.debug(ThisArg)
 		return Reflect.apply(Target, ThisArg, Args)
 	}
 })
