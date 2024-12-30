@@ -17,6 +17,31 @@ Win.Proxy = new Proxy(Win.Proxy, {
       Contents.map((Content: TPowerLinkContent) => Content.render = () => {})
       return Reflect.construct(Target, [Contents, Args[1]], NewTarget)
     }
+    
+    let IsPowerLinkVariant2nd = false
+    for (let [Key, Value] of Object.entries(Args[0])) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+      if (typeof Value === 'object' && Value !== null && typeof Value.render === 'function' && (Value.render as Function).toString().includes('content--stretch')) {
+        IsPowerLinkVariant2nd = true
+        break
+      }
+    }
+    if (IsPowerLinkVariant2nd) {
+      for (let [Key, Value] of Object.entries(Args[0])) {
+        if (typeof Value === 'object' && Value !== null && typeof Value.render === 'function') {
+          Value.render = () => {}
+        }
+      }
+    }
+    
 		return Reflect.construct(Target, Args, NewTarget)
 	}
 })
+
+setInterval(() => {
+  Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter(Filtered => Filtered instanceof HTMLElement &&
+    (Filtered.innerText.includes('파워링크') || Filtered.innerText === '') && Number(getComputedStyle(Filtered).getPropertyValue('padding-top').replaceAll('px', '')) > 8 &&
+    Number(getComputedStyle(Filtered).getPropertyValue('min-height').replaceAll('px', '')) > 100 &&
+    Number(getComputedStyle(Filtered).getPropertyValue('height').replaceAll('px', '')) < 250
+  ).forEach(Target => Target.setAttribute('style', 'display: none !important;'))
+}, 2500)
