@@ -70,6 +70,11 @@ Win.Proxy = new Proxy(Win.Proxy, {
             if (typeof PLData === 'undefined' || PLData === null || typeof PLData !== 'object') {
               continue
             }
+            try {
+              if (JSON.stringify(Args[0]).match(/<[a-zA-Z]+ /).length > 20) {
+                PowerLinkDataIndex = -99
+              }
+            } catch {}
             let PowerLinkDataIndexKey = [0, 0, 0, 0]
             const PowerLinkDataIndexConst = [3, 2, 2, 1]
             for (let [IKey, IValue] of Object.entries(PLData)) {
@@ -81,6 +86,9 @@ Win.Proxy = new Proxy(Win.Proxy, {
                 case 'object':
                   PowerLinkDataIndexKey[2]++
                 case 'number':
+                  if ((IValue as number) > 1000) {
+                    PowerLinkDataIndexKey[3] = -99
+                  }
                   PowerLinkDataIndexKey[3]++
               }
             }
