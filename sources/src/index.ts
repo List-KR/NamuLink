@@ -12,6 +12,13 @@ Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
     && /^\/[0-9]+\/namuwiki\/(?!sidebar-box)/.test((Args[0] as TPowerLink).unitPath)) {
       return
     }
+    if (Args[1] === '__v_skip' && typeof Args[0] === 'object' && Args[0] !== null && 'render' in Args[0]
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      && typeof (Args[0] as { render: unknown }).render === 'function' &&
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+      ((Args[0].render as Function).toString().includes('head__link') || (Args[0].render as Function).toString().includes('head__badge'))) {
+      throw new Error()
+    }
     return Reflect.apply(Target, ThisArg, Args)
   }
 })
