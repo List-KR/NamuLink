@@ -12,14 +12,12 @@ Win.Proxy = new Proxy(Win.Proxy, {
     let ArgsObj = Args[0]
 
     let IsPowerLinkVariant4th = false
-    const PowerLinkVariant4th = [2, 2]
-    let PowerLinkVariant4thIndex = [0, 0]
+    const PowerLinkVariant4th = [2]
+    let PowerLinkVariant4thIndex = [0]
     for (let [Key, Value] of Object.entries(Args[0])) {
       switch (typeof Value) {
         case 'number':
           PowerLinkVariant4thIndex[0]++
-        case 'boolean':
-          PowerLinkVariant4thIndex[1]++
       }
     }
     if (PowerLinkVariant4thIndex[0] >= PowerLinkVariant4th[0] && PowerLinkVariant4thIndex[1] >= PowerLinkVariant4th[1]) {
@@ -36,7 +34,7 @@ Win.Proxy = new Proxy(Win.Proxy, {
               }
             } catch {}
             let PowerLinkDataIndexKey = [0, 0, 0, 0]
-            const PowerLinkDataIndexConst = [3, 2, 2, 1]
+            const PowerLinkDataIndexConst = [3, 0, 1, 1]
             for (let [IKey, IValue] of Object.entries(PLData)) {
               switch (typeof IValue) {
                 case 'string':
@@ -61,11 +59,12 @@ Win.Proxy = new Proxy(Win.Proxy, {
       }
     }
     if (IsPowerLinkVariant4th) {
-      for (let [Key, Value] of Object.entries(Args[0])) {
-        if (typeof Value === 'object' && Value !== null && Array.isArray(Value)) {
-          ArgsObj[Key] = []
-        }
-      }
+      console.debug(Args[0])
+      // for (let [Key, Value] of Object.entries(Args[0])) {
+      //   if (typeof Value === 'object' && Value !== null && Array.isArray(Value)) {
+      //     ArgsObj[Key] = []
+      //   }
+      // }
       return Reflect.construct(Target, [ArgsObj, Args[1]], NewTarget)
     }
 
