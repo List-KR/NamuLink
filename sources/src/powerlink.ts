@@ -41,3 +41,15 @@ export type TPowerLinkContent = {
   __scopeId: string
   __v_skip: boolean
 }
+
+export type TPowerLinkObj = Record<string, TPowerLinkContent | null | string[] | string | number | number[]>
+
+export type TUnitPath = {
+  id: string,
+  refreshTick: number,
+  size: number[],
+  sizeMapping: Array<number[]>
+  unitPath: string
+}
+
+export type TPowerLinkMini = Record<string, number | boolean | Array<Record<string, string | boolean | string[] | number | Record<string, string>>>>
