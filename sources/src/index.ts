@@ -7,12 +7,12 @@ declare const unsafeWindow: unsafeWindow
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
 Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
-  apply(Target: typeof Object.defineProperty, This: null, Args: Parameters<typeof Object.defineProperty>) {
+  apply(Target: typeof Object.defineProperty, ThisArg: null, Args: Parameters<typeof Object.defineProperty>) {
     if (Args[0] && typeof (Args[0] as TPowerLink).unitPath === 'string'
     && /^\/[0-9]+\/namuwiki\/(?!sidebar-box)/.test((Args[0] as TPowerLink).unitPath)) {
       return
     }
-    return Reflect.apply(Target, This, Args)
+    return Reflect.apply(Target, ThisArg, Args)
   }
 })
 
