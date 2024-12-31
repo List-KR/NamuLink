@@ -25,7 +25,7 @@ Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
 
 setInterval(() => {
   Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter(Filtered => Filtered instanceof HTMLElement &&
-    (Filtered.innerText.includes('파워링크') || Filtered.innerText === '') && Number(getComputedStyle(Filtered).getPropertyValue('padding-top').replaceAll('px', '')) >= 8 &&
+    (Filtered.innerText.includes('파워링크') || Filtered.innerText === '' || Array.from(Filtered.querySelectorAll('img[src*="//i.namu.wiki/i/"]')).length > 2) && Number(getComputedStyle(Filtered).getPropertyValue('padding-top').replaceAll('px', '')) >= 8 &&
     Number(getComputedStyle(Filtered).getPropertyValue('min-height').replaceAll('px', '')) > 100 &&
     Number(getComputedStyle(Filtered).getPropertyValue('height').replaceAll('px', '')) < 400
   ).forEach(Target => Target.setAttribute('style', 'display: none !important;'))
