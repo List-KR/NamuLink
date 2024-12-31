@@ -10,46 +10,6 @@ Win.Proxy = new Proxy(Win.Proxy, {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 	construct<T extends object>(Target: ProxyConstructor, Args: [T, ProxyHandler<T>], NewTarget: Function): object {
     let ArgsObj = Args[0]
-		if (typeof Args[0] === 'object' && Object.keys(Args[0]).some((Key: string) => Key.startsWith('Content'))
-    && Object.keys(Args[0]).filter((Key: string) => Key.startsWith('Content')).some((Key: string) => {
-      return typeof Args[0][Key].render === 'function' && Args[0][Key].render.toString().includes('powerlink')
-    })) {
-      let Contents = Object.keys(Args[0]).filter((Key: string) => Key.startsWith('Content')).map((Key: string) => Args[0][Key]) as TPowerLinkContent[]
-      Contents.map((Content: TPowerLinkContent) => Content.render = () => {})
-      return Reflect.construct(Target, [Contents, Args[1]], NewTarget)
-    }
-    
-    let IsPowerLinkVariant2nd = false
-    for (let [Key, Value] of Object.entries(Args[0])) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-      if (typeof Value === 'object' && Value !== null && typeof Value.render === 'function' && (Value.render as Function).toString().includes('content--stretch')) {
-        IsPowerLinkVariant2nd = true
-        break
-      }
-    }
-    if (IsPowerLinkVariant2nd) {
-      let Contents = Args[0]
-      for (let [Key, Value] of Object.entries(Contents)) {
-        if (typeof Value === 'object' && Value !== null && typeof Value.render === 'function') {
-          Value.render = () => {}
-        }
-      }
-      return Reflect.construct(Target, [Contents, Args[1]], NewTarget)
-    }
-
-    let IsPowerLinkVariant3rd = false
-    for (let [Key, Value] of Object.entries(Args[0])) {
-      if (Key === 'unitPath' && typeof Value === 'string' && Value.includes('/namuwiki/') && !Value.includes('/sidebar')) {
-        IsPowerLinkVariant3rd ||= true
-        break
-      }
-    }
-    if (IsPowerLinkVariant3rd) {
-      (ArgsObj as TUnitPath).id = '';
-      (ArgsObj as TUnitPath).size = [0, 0];
-      (ArgsObj as TUnitPath).sizeMapping = [[0, 0]]
-      return Reflect.construct(Target, [ArgsObj, Args[1]], NewTarget)
-    }
 
     let IsPowerLinkVariant4th = false
     const PowerLinkVariant4th = [2, 2]
