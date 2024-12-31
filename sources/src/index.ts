@@ -86,9 +86,6 @@ Win.Proxy = new Proxy(Win.Proxy, {
                 case 'object':
                   PowerLinkDataIndexKey[2]++
                 case 'number':
-                  if ((IValue as number) > 1000) {
-                    PowerLinkDataIndexKey[3] = -99
-                  }
                   PowerLinkDataIndexKey[3]++
               }
             }
