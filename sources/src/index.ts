@@ -17,7 +17,7 @@ Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
       && typeof (Args[0] as { render: unknown }).render === 'function' &&
       // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       ((Args[0].render as Function).toString().includes('head__link') || (Args[0].render as Function).toString().includes('head__badge'))) {
-      throw new Error()
+      return {}
     }
     return Reflect.apply(Target, ThisArg, Args)
   }
