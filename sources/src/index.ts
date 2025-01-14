@@ -31,8 +31,9 @@ setInterval(() => {
     Number(getComputedStyle(Filtered).getPropertyValue('min-height').replaceAll('px', '')) > 100 &&
     Number(getComputedStyle(Filtered).getPropertyValue('height').replaceAll('px', '')) < 400
   ).forEach(Target => Target.setAttribute('style', 'display: none !important;'))
-  Array.from(document.querySelectorAll('div[class*=" "] div[class][style="display: none !important;"]')).filter(Filtered => Filtered instanceof HTMLElement &&
-    Number(getComputedStyle(Filtered.parentElement).getPropertyValue('min-height').replaceAll('px', '')) > 100 &&
-    Number(getComputedStyle(Filtered.parentElement).getPropertyValue('height').replaceAll('px', '')) < 400
-  ).forEach(Target => Target.parentElement.parentElement.remove())
+  Array.from(document.querySelectorAll('div[class*=" "] div[class*=" "]')).filter(Filtered => Filtered instanceof HTMLElement &&
+    Number(getComputedStyle(Filtered).getPropertyValue('min-height').replaceAll('px', '')) > 100 &&
+    Number(getComputedStyle(Filtered).getPropertyValue('height').replaceAll('px', '')) < 400 &&
+    Array.from(Filtered.querySelectorAll('*[style="display: none !important;"]')).length > 0
+  ).forEach(Target => Target.remove())
 }, 2500)
