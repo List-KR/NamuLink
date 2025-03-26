@@ -23,6 +23,16 @@ Win.Object.defineProperty = new Proxy(Win.Object.defineProperty, {
   }
 })
 
+Win.TextDecoder.prototype.decode = new Proxy(Win.TextDecoder.prototype.decode, {
+  apply(Target: typeof TextDecoder.prototype.decode, ThisArg: TextDecoder, Args: Parameters<typeof TextDecoder.prototype.decode>) {
+    const DecodedText = Reflect.apply(Target, ThisArg, Args)
+    if (DecodedText.startsWith('[[[[') && DecodedText.includes('///w==')) {
+      return ''
+    }
+    return DecodedText
+  }
+})
+
 setInterval(() => {
   Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter(Filtered => Filtered instanceof HTMLElement &&
     (Filtered.innerText.includes('파워링크') || Filtered.innerText === ''
