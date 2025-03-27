@@ -21,5 +21,5 @@ setInterval(() => {
     || Array.from(Filtered.querySelectorAll('span')).filter(Ele => getComputedStyle(Ele).getPropertyValue('background-image').startsWith('url(data:image/png;base64,'))) &&
     Number(getComputedStyle(Filtered).getPropertyValue('height').replaceAll('px', '')) < 400 &&
     Array.from(Filtered.querySelectorAll('*')).filter(Child => getComputedStyle(Child).getPropertyValue('animation-iteration-count') === 'infinite').length > 8
-  ).forEach(Target => Target.setAttribute('style', 'display: none !important;'))
+  ).forEach(Target => Target.remove()
 }, 2500)
