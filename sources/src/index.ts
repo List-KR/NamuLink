@@ -6,9 +6,9 @@ const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
 Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  apply(Target: typeof Function.prototype.apply, ThisArg: Function, Args: unknown[]) {
-    if (typeof Args[1] !== 'undefined' && typeof Args[1][0] === 'string' && Args[1][0].startsWith('/api/pl2/')) {
-      return Reflect.apply(Target, () => {}, [])
+  apply(Target: typeof Function.prototype.apply, ThisArg: Function, Args: Parameters<typeof Function.prototype.apply>) {
+    if (typeof ThisArg === 'function' && /switch *\(.+, *new/.test(ThisArg.toString()) && ThisArg.toString().match(/_0x/).length > 20) {
+      return Reflect.apply(Target, () => {}, Args)
     }
     return Reflect.apply(Target, ThisArg, Args)
   }
