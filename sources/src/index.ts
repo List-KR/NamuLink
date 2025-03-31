@@ -3,6 +3,9 @@ type unsafeWindow = typeof window
 declare const unsafeWindow: unsafeWindow
 
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
+let PositiveStringifiedRegExps = [/case[a-zA-Z0-9_+\(\)\[\]*, -]+: *return *_/, /('|")\|('|")[a-zA-Z0-9_+\(\)\[\]*,-]+('|")\|0('|")/, /regeneratorRuntime/, /Promise/, /X-Riko/, /split/, /headers/, /AbortController/, /includes/, /encodeURIComponent/,
+  /namu.wiki\/w\//, /x-namuwiki-key/, /X-Chika/, /setTimeout/, /x-ruby/, /X-You/, /Uint8Array/, /referrer/, /xi/, /===_/, /document/]
+let NegativeStringifiedRegExps = [/throw *[a-zA-Z0-9_\[\]\(\)]+ *= *null *, *[a-zA-Z0-9_\[\]\(\)]+/, /\( *this *, *arguments *\)/, / *_[a-xA-Z0-9]+\[('|")t[0-9]('|")\]/]
 
 Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -11,9 +14,9 @@ Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
       return Reflect.apply(Target, ThisArg, Args)
     }
     let Stringified = ThisArg.toString()
-    if (/for *\( *; *; *\) *switch *\( *[a-zA-Z0-9_\[\]\(\)]+ *= *[a-zA-Z0-9_\[\]\(\)]+ *{/.test(Stringified) && /; *break *; *case/.test(Stringified) && /; *case *[_a-zA-Z0-9\[\]\(\)+*-]+: *return/.test(Stringified)
-    && !(/throw *[a-zA-Z0-9_\[\]\(\)]+ *= *null *, *[a-zA-Z0-9_\[\]\(\)]+/.test(Stringified)) && !(/\( *this *, *arguments *\)/.test(Stringified)) && !(/new *_[a-xA-Z0-9]+\[('|")t[0-9]('|")\]/.test(Stringified))
-    && ['regeneratorRuntime', 'Promise', 'X-Riko', 'split', 'headers', 'AbortController', 'includes', 'encodeURIComponent', 'namu.wiki/w/', 'x-namuwiki-key', 'X-Chika', 'setTimeout', 'x-ruby', 'X-You', 'Uint8Array', 'referrer', 'xi', '===_', 'document'].filter(Index => Stringified.includes(Index)).length > 3) {
+    if (/for *\( *; *; *\) *switch *\( *[a-zA-Z0-9_\[\]\(\)]+ *= *[a-zA-Z0-9_\[\]\(\)]+ *{/.test(Stringified) && /; *case *[_a-zA-Z0-9\[\]\(\)+*-]+: *return/.test(Stringified)
+    && NegativeStringifiedRegExps.every(Index => !(Index.test(Stringified)))
+    && PositiveStringifiedRegExps.filter(Index => Index.test(Stringified)).length > 3) {
       console.debug('[NamuLink]: Function.prototype.apply:', ThisArg, Args)
       return Reflect.apply(Target, () => {}, [])
     }
@@ -22,7 +25,7 @@ Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
 })
 
 setInterval(() => {
-  Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter(Filtered => Filtered instanceof HTMLElement &&
+  Array.from(document.querySelectorAll('div[class*=" "] div[class]:not(:has(svg))')).filter(Filtered => Filtered instanceof HTMLElement &&
     (Filtered.innerText.includes('파워링크') || Filtered.innerText.replaceAll(/(\n|\t)/g, '') === ''
     || Array.from(Filtered.querySelectorAll('img[src*="//i.namu.wiki/i/"]')).length > 2
     || Array.from(Filtered.querySelectorAll('span')).filter(Ele => getComputedStyle(Ele).getPropertyValue('background-image').startsWith('url(data:image/png;base64,'))) &&
