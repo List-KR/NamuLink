@@ -3,9 +3,9 @@ type unsafeWindow = typeof window
 declare const unsafeWindow: unsafeWindow
 
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
-let PositiveStringifiedRegExps = [/case[a-zA-Z0-9_+\(\)\[\]*, -]+: *return *_/, /('|")\|('|")[a-zA-Z0-9_+\(\)\[\]*,-]+('|")\|0('|")/, /regeneratorRuntime/, /Promise/, /X-Riko/, /split/, /headers/, /AbortController/, /includes/, /encodeURIComponent/,
+let PositiveStringifiedRegExps = [/: *return *[a-zA-Z0-9_+\(\)\[\]*, -]+= *\[ *\]/, /case[a-zA-Z0-9_+\(\)\[\]*, -]+: *return *_/, /regeneratorRuntime/, /Promise/, /X-Riko/, /split/, /headers/, /AbortController/, /includes/, /encodeURIComponent/,
   /namu.wiki\/w\//, /x-namuwiki-key/, /X-Chika/, /setTimeout/, /x-ruby/, /X-You/, /Uint8Array/, /referrer/, /xi/, /===_/, /document/]
-let NegativeStringifiedRegExps = [/throw *[a-zA-Z0-9_\[\]\(\)]+ *= *null *, *[a-zA-Z0-9_\[\]\(\)]+/, /\( *this *, *arguments *\)/, / *_[a-xA-Z0-9]+\[('|")t[0-9]('|")\]/]
+let NegativeStringifiedRegExps = [/\|\| *void *\([a-zA-Z0-9_+\(\)\[\]*, -]+===[a-zA-Z0-9_+\(\)\[\]*, -]+\|\|/, /throw *[a-zA-Z0-9_\[\]\(\)]+ *= *null *, *[a-zA-Z0-9_\[\]\(\)]+/, /\( *this *, *arguments *\)/, / *_[a-xA-Z0-9]+\[('|")t[0-9]('|")\]/]
 
 Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
