@@ -13,7 +13,7 @@ Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
     let Stringified = ThisArg.toString()
     if (/for *\( *; *; *\) *switch *\( *[a-zA-Z0-9_\[\]\(\)]+ *= *[a-zA-Z0-9_\[\]\(\)]+ *{/.test(Stringified) && /; *break *; *case/.test(Stringified) && /; *case *[_a-zA-Z0-9\[\]\(\)+*-]+: *return/.test(Stringified)
     && !(/throw *[a-zA-Z0-9_\[\]\(\)]+ *= *null *, *[a-zA-Z0-9_\[\]\(\)]+/.test(Stringified)) && !(/\( *this *, *arguments *\)/.test(Stringified)) && !(/new *_[a-xA-Z0-9]+\[('|")t[0-9]('|")\]/.test(Stringified))
-    && ['Promise', 'X-Riko', 'split', 'headers', 'AbortController', 'includes', 'encodeURIComponent', 'namu.wiki/w/', 'x-namuwiki-key', 'X-Chika', 'setTimeout', 'x-ruby', 'X-You', 'Uint8Array', 'referrer', 'xi', '===_', 'document'].filter(Index => Stringified.includes(Index)).length > 3) {
+    && ['regeneratorRuntime', 'Promise', 'X-Riko', 'split', 'headers', 'AbortController', 'includes', 'encodeURIComponent', 'namu.wiki/w/', 'x-namuwiki-key', 'X-Chika', 'setTimeout', 'x-ruby', 'X-You', 'Uint8Array', 'referrer', 'xi', '===_', 'document'].filter(Index => Stringified.includes(Index)).length > 3) {
       console.debug('[NamuLink]: Function.prototype.apply:', ThisArg, Args)
       return Reflect.apply(Target, () => {}, [])
     }
