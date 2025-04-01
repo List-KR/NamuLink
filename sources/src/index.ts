@@ -4,8 +4,8 @@ declare const unsafeWindow: unsafeWindow
 
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 let PositiveStringifiedRegExps = [/case[a-zA-Z0-9_+\(\)\[\]*, -]+: *return *[a-zA-Z0-9_+\(\)\[\]*, -]+;? *} *} *,[a-zA-Z0-9_+\(\)\[\]*, -]+, *null, */, /: *return *[a-zA-Z0-9_+\(\)\[\]*, -]+= *\[ *\]/, /case[a-zA-Z0-9_+\(\)\[\]*, -]+: *return *_/, /regeneratorRuntime/, /Promise/, /X-Riko/, /split/, /headers/, /AbortController/, /includes/, /encodeURIComponent/,
-  /namu.wiki\/w\//, /x-namuwiki-key/, /X-Chika/, /setTimeout/, /x-ruby/, /X-You/, /Uint8Array/, /referrer/, /xi/, /===_/, /document/]
-let NegativeStringifiedRegExps = [/\|\| *void *\([a-zA-Z0-9_+\(\)\[\]*, -]+===[a-zA-Z0-9_+\(\)\[\]*, -]+\|\|/, /throw *[a-zA-Z0-9_\[\]\(\)]+ *= *null *, *[a-zA-Z0-9_\[\]\(\)]+/, /\( *this *, *arguments *\)/, / *_[a-xA-Z0-9]+\[('|")t[0-9]('|")\]/]
+  /namu.wiki\/w\//, /x-namuwiki-key/, /X-Chika/, /setTimeout/, /x-ruby/, /X-You/, /Uint8Array/, /referrer/, /xi/, /===_/, /document/, /; *case *[_a-zA-Z0-9\[\]\(\)+*-]+: *return/]
+let NegativeStringifiedRegExps = [/, *[a-zA-Z0-9_+\(\)\[\]*, -]+('|")\$[A-Za-z0-9]+('|") *\] *\) *\( *\(/, /\( *{ *('|")title *('|") *:[a-zA-Z0-9_+\(\)\[\]*, -]+('|")link *('|")/, /\|\| *void *\([a-zA-Z0-9_+\(\)\[\]*, -]+===[a-zA-Z0-9_+\(\)\[\]*, -]+\|\|/, /throw *[a-zA-Z0-9_\[\]\(\)]+ *= *null *, *[a-zA-Z0-9_\[\]\(\)]+/, /\( *this *, *arguments *\)/, / *_[a-xA-Z0-9]+\[('|")t[0-9]('|")\]/]
 
 Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -14,9 +14,9 @@ Win.Function.prototype.apply = new Proxy(Win.Function.prototype.apply, {
       return Reflect.apply(Target, ThisArg, Args)
     }
     let Stringified = ThisArg.toString()
-    if (/for *\( *; *; *\) *switch *\( *[a-zA-Z0-9_\[\]\(\)]+ *= *[a-zA-Z0-9_\[\]\(\)]+ *{/.test(Stringified) && /; *case *[_a-zA-Z0-9\[\]\(\)+*-]+: *return/.test(Stringified)
+    if (/for *\( *; *; *\) *switch *\( *[a-zA-Z0-9_\[\]\(\)]+ *= *[a-zA-Z0-9_\[\]\(\)]+ *{/.test(Stringified)
     && NegativeStringifiedRegExps.every(Index => !(Index.test(Stringified)))
-    && PositiveStringifiedRegExps.filter(Index => Index.test(Stringified)).length > 3) {
+    && PositiveStringifiedRegExps.filter(Index => Index.test(Stringified)).length > 2) {
       console.debug('[NamuLink]: Function.prototype.apply:', ThisArg, Args)
       return Reflect.apply(Target, () => {}, [])
     }
