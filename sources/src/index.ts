@@ -3,7 +3,7 @@ type unsafeWindow = typeof window
 declare const unsafeWindow: unsafeWindow
 
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
-let PositiveStringifiedRegExps = [/: *return *[a-zA-Z0-9_+\(\)\[\]*, -]+= *\[ *\]/, /case[a-zA-Z0-9_+\(\)\[\]*, -]+: *return *_/, /regeneratorRuntime/, /Promise/, /X-Riko/, /split/, /headers/, /AbortController/, /includes/, /encodeURIComponent/,
+let PositiveStringifiedRegExps = [/case[a-zA-Z0-9_+\(\)\[\]*, -]+: *return *[a-zA-Z0-9_+\(\)\[\]*, -]+;? *} *} *,[a-zA-Z0-9_+\(\)\[\]*, -]+, *null, */, /: *return *[a-zA-Z0-9_+\(\)\[\]*, -]+= *\[ *\]/, /case[a-zA-Z0-9_+\(\)\[\]*, -]+: *return *_/, /regeneratorRuntime/, /Promise/, /X-Riko/, /split/, /headers/, /AbortController/, /includes/, /encodeURIComponent/,
   /namu.wiki\/w\//, /x-namuwiki-key/, /X-Chika/, /setTimeout/, /x-ruby/, /X-You/, /Uint8Array/, /referrer/, /xi/, /===_/, /document/]
 let NegativeStringifiedRegExps = [/\|\| *void *\([a-zA-Z0-9_+\(\)\[\]*, -]+===[a-zA-Z0-9_+\(\)\[\]*, -]+\|\|/, /throw *[a-zA-Z0-9_\[\]\(\)]+ *= *null *, *[a-zA-Z0-9_\[\]\(\)]+/, /\( *this *, *arguments *\)/, / *_[a-xA-Z0-9]+\[('|")t[0-9]('|")\]/]
 
