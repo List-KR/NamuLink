@@ -5,9 +5,9 @@ declare const unsafeWindow: unsafeWindow
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
 let PositiveRegExps = [
-  /=== *this\[ *_[A-Za-z0-9]+\([A-Za-z0-9]+\) *\] *&& *this/,
-  /, *this *\[_[A-Za-z0-9]+\([A-Za-z0-9]+\) *\] *= *_[A-Za-z0-9]+\[/,
-  /, *void *\( *this\[_[A-Za-z0-9]+\([A-Za-z0-9]+\)\] *= *!/
+  /('|")[0-9]+('|") *=== *\( *null *=== *\(_[A-Za-z0-9]+ *= *this/,
+  /\|\| *void *\([-A-Za-z0-9+* -]+ *\) *=== *_[A-Za-z0-9]+/,
+  /=== *_[A-Za-z0-9]+ *\? *void/
 ]
 let NegaitiveRegExps = [/(Promise|_[A-Za-z0-9]+)\( *_[A-Za-z0-9]+ *=> *(setTimeout|_[A-Za-z0-9]+)/]
 
