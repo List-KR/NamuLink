@@ -4,15 +4,18 @@ declare const unsafeWindow: unsafeWindow
 
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
-let PositiveRegExps = [/('|")[A-Za-z0-9]+('|") *\(\) *\{ *(var|let|const) *_[A-Za-z0-9]+ *= *_[A-Za-z0-9]+ *, *_[A-Za-z0-9]+ *= *this *; *return/,
-  /for *\( *; *; *\) *switch *\( *[A-Za-z0-9_]+ *\[ *[A-Za-z0-9_]+ *\( *[A-Za-z0-9_]+ *\) *\] *=/, /[A-Za-z0-9_]+ *: *return *[A-Za-z0-9_]+/, / *; *return *regeneratorRuntime\[/, /('|")xi('|")\]\)\(/]
+let PositiveRegExps = [
+  /=== *this\[ *_[A-Za-z0-9]+\([A-Za-z0-9]+\) *\] *&& *this/,
+  /, *this *\[_[A-Za-z0-9]+\([A-Za-z0-9]+\) *\] *= *_[A-Za-z0-9]+\[/,
+  /, *void *\( *this\[_[A-Za-z0-9]+\([A-Za-z0-9]+\)\] *= *!/
+]
 let NegaitiveRegExps = [/(Promise|_[A-Za-z0-9]+)\( *_[A-Za-z0-9]+ *=> *(setTimeout|_[A-Za-z0-9]+)/]
 
 Win.Function.prototype.bind = new Proxy(Win.Function.prototype.bind, {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   apply(Target: typeof Function.prototype.bind, ThisArg: Function, Args: Parameters<typeof Function.prototype.bind>) {
     let Stringified = ThisArg.toString()
-    if (PositiveRegExps.filter(Index => Index.test(Stringified)).length >= 5 && NegaitiveRegExps.every(Index => !Index.test(Stringified))) {
+    if (PositiveRegExps.filter(Index => Index.test(Stringified)).length >= 3 && NegaitiveRegExps.every(Index => !Index.test(Stringified))) {
       console.debug('[NamuLink]: Function.prototype.bind:', ThisArg, Args)
       return Reflect.apply(Target, () => {}, [])
     }
