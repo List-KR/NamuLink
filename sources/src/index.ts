@@ -42,5 +42,9 @@ setInterval(() => {
 
   AdContainers = AdContainers.filter(AdContainer => GetParents(AdContainer).some(Parent => Number(getComputedStyle(Parent).getPropertyValue('padding-top').replaceAll('px', '')) > 20 ))
 
+  AdContainers = AdContainers.filter(AdContainer => AdContainer.innerText.length < 1000)
+
+  AdContainers = AdContainers.filter(AdContainer => Array.from(AdContainer.querySelectorAll('*[href="/RecentChanges"]')).filter(Ele => Ele instanceof HTMLElement && getComputedStyle(Ele).getPropertyValue('display') !== 'none').length === 0)
+
   AdContainers.forEach(AdContainer => AdContainer.remove())
 }, 1000)
