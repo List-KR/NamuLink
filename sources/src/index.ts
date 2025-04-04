@@ -4,12 +4,43 @@ declare const unsafeWindow: unsafeWindow
 
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
-let HidePowerLink = () => {
-  let Target = Array.from(document.querySelectorAll('div[class*=" "] div[class*=" "]:has(*[href="#s-1"]):has([data-filesize])'))
-  Target = Target.filter(El => El instanceof HTMLElement && Number(getComputedStyle(El).getPropertyValue('height').replaceAll('px', '')) < 300)
-  Target.forEach(El => {
-    El.remove()
-  })
+let AdClickElemnts: HTMLElement[] = []
+let AdClickFuncRegExps = [
+  /=> *{ *if *\( *[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+ *\) *\{ *if *\( *[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+ *<=/,
+  /\.map\( *\( *[a-zA-Z0-9_]+ *=> *[a-zA-Z0-9_]+ *=> *! *[a-zA-Z0-9_]+\._stopped *&&/
+]
+
+function GetParents(Ele: HTMLElement) {
+  let Parents: HTMLElement[] = []
+  while (Ele.parentElement) {
+    Parents.push(Ele.parentElement)
+    Ele = Ele.parentElement
+  }
+  return Parents
 }
 
-setInterval(HidePowerLink, 2500)
+Win.EventTarget.prototype.addEventListener = new Proxy(Win.EventTarget.prototype.addEventListener, {
+  apply(Target: typeof EventTarget.prototype.addEventListener, ThisArg: EventTarget, Args: Parameters<typeof EventTarget.prototype.addEventListener>) {
+    if (ThisArg instanceof HTMLElement && Args[0] === 'click' && typeof Args[1] === 'function' && AdClickFuncRegExps.filter(Index => Index.test(Args[1].toString())).length >= 2) {
+      AdClickElemnts.push(ThisArg)
+    }
+    return Reflect.apply(Target, ThisArg, Args)
+  }
+})
+
+setInterval(() => {
+  let AdContainers = Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter(AdContainer => AdContainer instanceof HTMLElement)
+
+  AdContainers = AdContainers.filter((AdContainer) => {
+    let AdContainerPaddingLeft = Number(getComputedStyle(AdContainer).getPropertyValue('padding-left').replaceAll('px', ''))
+    let AdContainerPaddingRight = Number(getComputedStyle(AdContainer).getPropertyValue('padding-right').replaceAll('px', ''))
+    let AdContainerPaddingTop = Number(getComputedStyle(AdContainer).getPropertyValue('padding-top').replaceAll('px', ''))
+    let AdContainerPaddingBottom = Number(getComputedStyle(AdContainer).getPropertyValue('padding-bottom').replaceAll('px', ''))
+    return AdContainerPaddingLeft > 5 && AdContainerPaddingRight > 5 && AdContainerPaddingTop > 5 && AdContainerPaddingBottom > 5
+  })
+  AdContainers = AdContainers.filter(AdContainer => AdClickElemnts.some(AdClickElemnt => AdContainer.contains(AdClickElemnt)))
+
+  AdContainers = AdContainers.filter(AdContainer => GetParents(AdContainer).some(Parent => Number(getComputedStyle(Parent).getPropertyValue('padding-top').replaceAll('px', '')) > 20 ))
+
+  AdContainers.forEach(AdContainer => AdContainer.remove())
+}, 1000)
