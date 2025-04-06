@@ -29,26 +29,28 @@ Win.EventTarget.prototype.addEventListener = new Proxy(Win.EventTarget.prototype
 })
 
 setInterval(() => {
-  let AdContainers = Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter(AdContainer => AdContainer instanceof HTMLElement)
+  if (!location.href.startsWith('https://namu.wiki/w/')) {
+    let AdContainers = Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter(AdContainer => AdContainer instanceof HTMLElement)
 
-  AdContainers = AdContainers.filter((AdContainer) => {
-    let AdContainerPaddingLeft = Number(getComputedStyle(AdContainer).getPropertyValue('padding-left').replaceAll('px', ''))
-    let AdContainerPaddingRight = Number(getComputedStyle(AdContainer).getPropertyValue('padding-right').replaceAll('px', ''))
-    let AdContainerPaddingTop = Number(getComputedStyle(AdContainer).getPropertyValue('padding-top').replaceAll('px', ''))
-    let AdContainerPaddingBottom = Number(getComputedStyle(AdContainer).getPropertyValue('padding-bottom').replaceAll('px', ''))
-    return AdContainerPaddingLeft > 5 && AdContainerPaddingRight > 5 && AdContainerPaddingTop > 5 && AdContainerPaddingBottom > 5
-  })
-  AdContainers = AdContainers.filter(AdContainer => AdClickElemnts.some(AdClickElemnt => AdContainer.contains(AdClickElemnt)))
+    AdContainers = AdContainers.filter((AdContainer) => {
+      let AdContainerPaddingLeft = Number(getComputedStyle(AdContainer).getPropertyValue('padding-left').replaceAll('px', ''))
+      let AdContainerPaddingRight = Number(getComputedStyle(AdContainer).getPropertyValue('padding-right').replaceAll('px', ''))
+      let AdContainerPaddingTop = Number(getComputedStyle(AdContainer).getPropertyValue('padding-top').replaceAll('px', ''))
+      let AdContainerPaddingBottom = Number(getComputedStyle(AdContainer).getPropertyValue('padding-bottom').replaceAll('px', ''))
+      return AdContainerPaddingLeft > 5 && AdContainerPaddingRight > 5 && AdContainerPaddingTop > 5 && AdContainerPaddingBottom > 5
+    })
+    AdContainers = AdContainers.filter(AdContainer => AdClickElemnts.some(AdClickElemnt => AdContainer.contains(AdClickElemnt)))
 
-  AdContainers = AdContainers.filter(AdContainer => GetParents(AdContainer).some(Parent => Number(getComputedStyle(Parent).getPropertyValue('padding-top').replaceAll('px', '')) > 20 ))
+    AdContainers = AdContainers.filter(AdContainer => GetParents(AdContainer).some(Parent => Number(getComputedStyle(Parent).getPropertyValue('padding-top').replaceAll('px', '')) > 20 ))
 
-  AdContainers = AdContainers.filter(AdContainer => AdContainer.innerText.length < 1000)
+    AdContainers = AdContainers.filter(AdContainer => AdContainer.innerText.length < 1000)
 
-  AdContainers = AdContainers.filter(AdContainer => Array.from(AdContainer.querySelectorAll('*[href="/RecentChanges"]')).filter(Ele => Ele instanceof HTMLElement && getComputedStyle(Ele).getPropertyValue('display') !== 'none').length === 0)
+    AdContainers = AdContainers.filter(AdContainer => Array.from(AdContainer.querySelectorAll('*[href="/RecentChanges"]')).filter(Ele => Ele instanceof HTMLElement && getComputedStyle(Ele).getPropertyValue('display') !== 'none').length === 0)
 
-  AdContainers = AdContainers.filter(AdContainer => !AdContainer.innerText.includes((new URL(location.href).searchParams.get('from') || '') + '에서 넘어옴'))
+    AdContainers = AdContainers.filter(AdContainer => !AdContainer.innerText.includes((new URL(location.href).searchParams.get('from') || '') + '에서 넘어옴'))
 
-  AdContainers = AdContainers.filter(AdContainer => !/\[[0-9]+\] .+/.test(AdContainer.innerText))
+    AdContainers = AdContainers.filter(AdContainer => !/\[[0-9]+\] .+/.test(AdContainer.innerText))
 
-  console.debug(AdContainers)
+    AdContainers.forEach(Ele => Ele.remove())
+  }
 }, 1000)
