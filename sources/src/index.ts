@@ -29,7 +29,7 @@ Win.EventTarget.prototype.addEventListener = new Proxy(Win.EventTarget.prototype
 })
 
 setInterval(() => {
-  if (!location.href.startsWith('https://namu.wiki/w/')) {
+  if (location.href.startsWith('https://namu.wiki/w/')) {
     let AdContainers = Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter(AdContainer => AdContainer instanceof HTMLElement)
 
     AdContainers = AdContainers.filter((AdContainer) => {
