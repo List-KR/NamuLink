@@ -41,7 +41,7 @@ setInterval(() => {
     })
     AdContainers = AdContainers.filter(AdContainer => AdClickElemnts.some(AdClickElemnt => AdContainer.contains(AdClickElemnt)))
 
-    AdContainers = AdContainers.filter(AdContainer => GetParents(AdContainer).some(Parent => Number(getComputedStyle(Parent).getPropertyValue('padding-top').replaceAll('px', '')) > 20 ))
+    AdContainers = AdContainers.filter(AdContainer => GetParents(AdContainer).some(Parent => Number(getComputedStyle(Parent).getPropertyValue('margin-top').replaceAll('px', '')) > 10 ))
 
     AdContainers = AdContainers.filter(AdContainer => AdContainer.innerText.length < 1000)
 
