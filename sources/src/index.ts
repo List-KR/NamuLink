@@ -28,8 +28,20 @@ Win.EventTarget.prototype.addEventListener = new Proxy(Win.EventTarget.prototype
   }
 })
 
+let HidePowerLinkLeftover = () => {
+  Array.from(document.querySelectorAll('div[class*=" "] div[class]:not(:has(svg))')).filter(Filtered => Filtered instanceof HTMLElement &&
+    (Filtered.innerText.includes('파워링크') || Filtered.innerText.replaceAll(/(\n|\t)/g, '') === ''
+    || Array.from(Filtered.querySelectorAll('img[src*="//i.namu.wiki/i/"]')).length > 2
+    || Array.from(Filtered.querySelectorAll('span')).filter(Ele => getComputedStyle(Ele).getPropertyValue('background-image').startsWith('url(data:image/png;base64,'))) &&
+    Number(getComputedStyle(Filtered).getPropertyValue('height').replaceAll('px', '')) < 400 &&
+    Array.from(Filtered.querySelectorAll('*')).filter(Child => getComputedStyle(Child).getPropertyValue('animation-iteration-count') === 'infinite').length >= 6
+  ).forEach(Target => Target.remove())
+}
+
+
 setInterval(() => {
   if (location.href.startsWith('https://namu.wiki/w/')) {
+    HidePowerLinkLeftover()
     let AdContainers = Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter(AdContainer => AdContainer instanceof HTMLElement)
 
     AdContainers = AdContainers.filter((AdContainer) => {
@@ -54,3 +66,20 @@ setInterval(() => {
     AdContainers.forEach(Ele => Ele.remove())
   }
 }, 1000)
+
+let PowerLinkGenerationPositiveRegExps = [
+  /for *\( *; *; *\) *switch *\( *_[a-z0-9]+\[_[a-z0-9]+\([a-z0-9]+\)\] *=_[a-z0-9]+/,
+  /_[a-z0-9]+\[('|")[A-Z]+('|")\]\)\(\[ *\]\)/,
+  /0x[a-z0-9]+ *\) *; *case/
+]
+
+Win.Function.prototype.bind = new Proxy(Win.Function.prototype.bind, {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  apply(Target: typeof Function.prototype.bind, ThisArg: Function, Args: Parameters<typeof Function.prototype.bind>) {
+    let StringifiedFunc = ThisArg.toString()
+    if (PowerLinkGenerationPositiveRegExps.filter(Index => Index.test(StringifiedFunc)).length >= 3) {
+      return Reflect.apply(Target, () => {}, [])
+    }
+    return Reflect.apply(Target, ThisArg, Args)
+  }
+})
