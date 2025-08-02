@@ -1,3 +1,5 @@
+import { decodeIResult } from './decryptor.js'
+
 type unsafeWindow = typeof window
 // eslint-disable-next-line @typescript-eslint/naming-convention
 declare const unsafeWindow: unsafeWindow
@@ -81,5 +83,31 @@ Win.Function.prototype.bind = new Proxy(Win.Function.prototype.bind, {
       return Reflect.apply(Target, () => {}, [])
     }
     return Reflect.apply(Target, ThisArg, Args)
+  }
+})
+
+Win.fetch = new Proxy(Win.fetch, {
+  async apply(Target: typeof fetch, ThisArg: typeof Win, Args: Parameters<typeof fetch>) {
+    let AwaitResult = Reflect.apply(Target, ThisArg, Args)
+    let Result = await AwaitResult
+    if (Result.headers.has('x-namuwiki-key') && Args[0] instanceof Request && Args[0].headers.has('x-namuwiki-nonce') &&
+    decodeIResult(Args[0].url, Result.headers.get('x-namuwiki-key'), Args[0].headers.get('x-namuwiki-nonce'))) {
+      return new Promise(() => {})
+    }
+    if (Result.headers.has('x-namuwiki-key') && !(Args[0] instanceof Request) && Args[1].headers instanceof Headers && Args[1].headers.has('x-namuwiki-nonce') &&
+    decodeIResult(Args[0] instanceof URL ? Args[0].pathname : Args[0], Result.headers.get('x-namuwiki-key'), Args[1].headers.get('x-namuwiki-nonce'))) {
+      return new Promise(() => {})
+    }
+    if (Result.headers.has('x-namuwiki-key') && !(Args[0] instanceof Request) && !(Args[1].headers instanceof Headers) &&
+    Array.isArray(Args[1].headers) && Args[1].headers.some(InnerHeader => InnerHeader[0] === 'x-namuwiki-nonce') &&
+    decodeIResult(Args[0] instanceof URL ? Args[0].pathname : Args[0], Result.headers.get('x-namuwiki-key'), Args[1].headers.find(InnerHeader => InnerHeader[0] === 'x-namuwiki-nonce')[1])) {
+      return new Promise(() => {})
+    }
+    if (Result.headers.has('x-namuwiki-key') && !(Args[0] instanceof Request) && !(Args[1].headers instanceof Headers) &&
+    !Array.isArray(Args[1].headers) && typeof Args[1].headers['x-namuwiki-nonce'] === 'string' &&
+    decodeIResult(Args[0] instanceof URL ? Args[0].pathname : Args[0], Result.headers.get('x-namuwiki-key'), Args[1].headers['x-namuwiki-nonce'])) {
+      return new Promise(() => {})
+    }
+    return Result
   }
 })
