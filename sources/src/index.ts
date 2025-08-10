@@ -67,17 +67,22 @@ setInterval(() => {
   }
 }, 1000)
 
-let PowerLinkGenerationPositiveRegExps = [
+let PowerLinkGenerationPositiveRegExps: RegExp[][] = [[
   /for *\( *; *; *\) *switch *\( *_[a-z0-9]+\[_[a-z0-9]+\([a-z0-9]+\)\] *=_[a-z0-9]+/,
   /_[a-z0-9]+\[('|")[A-Z]+('|")\]\)\(\[ *\]\)/,
   /0x[a-z0-9]+ *\) *; *case/
-]
+], [
+  /; *return *this\[_0x[a-z0-9]+\( *0x[0-9a-z]+ *\)/,
+  /; *if *\( *_0x[a-z0-9]+ *&& *\( *_0x[a-z0-9]+ *= *_0x[a-z0-9]+/,
+  /\) *, *void *\( *this *\[ *_0x[a-z0-9]+\( *0x[0-9a-z]+ *\) *\] *= *_0x[a-z0-9]+ *\[/
+]]
 
 Win.Function.prototype.bind = new Proxy(Win.Function.prototype.bind, {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   apply(Target: typeof Function.prototype.bind, ThisArg: Function, Args: Parameters<typeof Function.prototype.bind>) {
     let StringifiedFunc = ThisArg.toString()
-    if (PowerLinkGenerationPositiveRegExps.filter(Index => Index.test(StringifiedFunc)).length >= 3) {
+    if (PowerLinkGenerationPositiveRegExps.filter(PowerLinkGenerationPositiveRegExp => PowerLinkGenerationPositiveRegExp.filter(Index => Index.test(StringifiedFunc)).length >= 3).length === 1) {
+      console.debug('[NamuLink] Function.prototype.bind:', ThisArg)
       return Reflect.apply(Target, () => {}, [])
     }
     return Reflect.apply(Target, ThisArg, Args)
