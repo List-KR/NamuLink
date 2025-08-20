@@ -28,20 +28,8 @@ Win.EventTarget.prototype.addEventListener = new Proxy(Win.EventTarget.prototype
   }
 })
 
-let HidePowerLinkLeftover = () => {
-  Array.from(document.querySelectorAll('div[class*=" "] div[class]:not(:has(svg))')).filter(Filtered => Filtered instanceof HTMLElement &&
-    (Filtered.innerText.includes('파워링크') || Filtered.innerText.replaceAll(/(\n|\t)/g, '') === ''
-    || Array.from(Filtered.querySelectorAll('img[src*="//i.namu.wiki/i/"]')).length > 2
-    || Array.from(Filtered.querySelectorAll('span')).filter(Ele => getComputedStyle(Ele).getPropertyValue('background-image').startsWith('url(data:image/png;base64,'))) &&
-    Number(getComputedStyle(Filtered).getPropertyValue('height').replaceAll('px', '')) < 400 &&
-    Array.from(Filtered.querySelectorAll('*')).filter(Child => getComputedStyle(Child).getPropertyValue('animation-iteration-count') === 'infinite').length >= 6
-  ).forEach(Target => Target.remove())
-}
-
-
 setInterval(() => {
   if (location.href.startsWith('https://namu.wiki/w/')) {
-    HidePowerLinkLeftover()
     let AdContainers = Array.from(document.querySelectorAll('div[class*=" "] div[class]')).filter(AdContainer => AdContainer instanceof HTMLElement)
 
     AdContainers = AdContainers.filter((AdContainer) => {
