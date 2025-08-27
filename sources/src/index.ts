@@ -67,7 +67,11 @@ Win.Function.prototype.bind = new Proxy(Win.Function.prototype.bind, {
 })
 
 let PowerLinkGenerationSkeletionPositiveRegExps: RegExp[][] = [[
-  /\( *\) *=> *{ *var *_0x[0-9a-z]+ *= *a0_0x[0-9]+ *; *this\[ *_0x[a-z0-9]+\( *0x[0-9]+ *\) *\]\(\); *}/
+  /\( *\) *=> *{ *var *_0x[0-9a-z]+ *= *a0_0x[0-9a-f]+ *; *this\[ *_0x[a-z0-9]+\( *0x[0-9a-f]+ *\) *\]\(\); *}/,
+  /\( *\) *=> *{ *var *_0x[0-9a-z]+ *= *a0_0x[0-9a-f]+ *; *this\[ *_0x[a-z0-9]+\( *0x[0-9a-f]+ *\) *\]\(\); *}/
+], [
+  /\( *\) *=> *{ *var _0x[a-z0-9]+ *= *_0x[a-z0-9]+ *; *if *\( *this\[ *_0x[a-z0-9]+ *\( *0x[0-9a-f]+ *\) *\] *\) *return *clearTimeout/,
+  /\( *0x[0-9a-f]+ *\) *\] *\) *, *void *\( *this\[ *_0x[a-z0-9]+\( *0x[0-9a-f]+ *\) *\] *= *void *\([x0-9a-f*+-]+ *\) *\) *; *this\[_0x[a-z0-9]+\( *0x[0-9a-f]+ *\) *\] *\(\) *;/
 ]]
 
 Win.setTimeout = new Proxy(Win.setTimeout, {
