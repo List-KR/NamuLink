@@ -16,6 +16,7 @@ jobs:
         with:
           node-version: 'lts/*'
           registry-url: 'https://registry.npmjs.org'
+          scope: '@list-kr'
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install dependencies
@@ -23,7 +24,7 @@ jobs:
       - name: Build
         run: npm run build
       - name : Publish to npm
-        run: npm publish --access public
+        run: npm publish --access public --provenance
   purge:
     name: Purge jsdelivr cache
     runs-on: ubuntu-latest
