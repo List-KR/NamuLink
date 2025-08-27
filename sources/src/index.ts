@@ -76,3 +76,19 @@ Win.Function.prototype.bind = new Proxy(Win.Function.prototype.bind, {
     return Reflect.apply(Target, ThisArg, Args)
   }
 })
+
+let PowerLinkGenerationSkeletionPositiveRegExps: RegExp[][] = [[
+  /\( *\) *=> *{ *var *_0x[0-9a-z]+ *= *a0_0x[0-9]+ *; *this\[ *_0x[a-z0-9]+\( *0x[0-9]+ *\) *\]\(\); *}/
+]]
+
+Win.setTimeout = new Proxy(Win.setTimeout, {
+  apply(Target: typeof setTimeout, ThisArg: undefined, Args: Parameters<typeof setTimeout>) {
+    let StringifiedFunc = Args[0].toString()
+    if (PowerLinkGenerationSkeletionPositiveRegExps.filter(PowerLinkGenerationSkeletionPositiveRegExp => PowerLinkGenerationSkeletionPositiveRegExp.filter(Index => Index.test(StringifiedFunc)).length >= 1).length === 1) {
+      console.debug('[NamuLink] setTimeout:', Args[0])
+      return Reflect.apply(Target, ThisArg, [() => {}, Args[1]])
+    }
+
+    return Reflect.apply(Target, ThisArg, Args)
+  }
+})
