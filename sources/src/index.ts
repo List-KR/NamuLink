@@ -4,12 +4,6 @@ declare const unsafeWindow: unsafeWindow
 
 const Win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window
 
-let AdClickElemnts: HTMLElement[] = []
-let AdClickFuncRegExps = [
-  /=> *{ *if *\( *[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+ *\) *\{ *if *\( *[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+ *<=/,
-  /\.map\( *\( *[a-zA-Z0-9_]+ *=> *[a-zA-Z0-9_]+ *=> *! *[a-zA-Z0-9_]+\._stopped *&&/
-]
-
 function GetParents(Ele: HTMLElement) {
   let Parents: HTMLElement[] = []
   while (Ele.parentElement) {
@@ -18,15 +12,6 @@ function GetParents(Ele: HTMLElement) {
   }
   return Parents
 }
-
-Win.EventTarget.prototype.addEventListener = new Proxy(Win.EventTarget.prototype.addEventListener, {
-  apply(Target: typeof EventTarget.prototype.addEventListener, ThisArg: EventTarget, Args: Parameters<typeof EventTarget.prototype.addEventListener>) {
-    if (ThisArg instanceof HTMLElement && Args[0] === 'click' && typeof Args[1] === 'function' && AdClickFuncRegExps.filter(Index => Index.test(Args[1].toString())).length >= 2) {
-      AdClickElemnts.push(ThisArg)
-    }
-    return Reflect.apply(Target, ThisArg, Args)
-  }
-})
 
 setInterval(() => {
   if (location.href.startsWith('https://namu.wiki/w/')) {
@@ -39,7 +24,11 @@ setInterval(() => {
       let AdContainerPaddingBottom = Number(getComputedStyle(AdContainer).getPropertyValue('padding-bottom').replaceAll('px', ''))
       return AdContainerPaddingLeft > 5 && AdContainerPaddingRight > 5 && AdContainerPaddingTop > 5 && AdContainerPaddingBottom > 5
     })
-    AdContainers = AdContainers.filter(AdContainer => AdClickElemnts.some(AdClickElemnt => AdContainer.contains(AdClickElemnt)))
+
+    AdContainers = AdContainers.filter(AdContainer => {
+      return Array.from(AdContainer.querySelectorAll('*')).filter(Ele => Ele instanceof HTMLElement &&
+        getComputedStyle(Ele).getPropertyValue('animation-timing-function') === 'ease-in-out').length >= 3
+    })
 
     AdContainers = AdContainers.filter(AdContainer => GetParents(AdContainer).some(Parent => Number(getComputedStyle(Parent).getPropertyValue('margin-top').replaceAll('px', '')) > 10 ))
 
