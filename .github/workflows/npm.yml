@@ -15,7 +15,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'https://registry.npmjs.org/'
           scope: '@list-kr'
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,6 +23,11 @@ jobs:
         run: npm i
       - name: Build
         run: npm run build
+      - name: Debugging log
+        run: |
+          echo "registry     => $(npm config get registry)"
+          echo "@list-kr reg => $(npm config get @list-kr:registry || true)"
+          test -f .npmrc && echo ".npmrc =====" && cat .npmrc || true
       - name : Publish to npm
         run: npm publish --access public --provenance
   purge:
