@@ -2,7 +2,7 @@
 
 [![jsDelivr Stats](https://data.jsdelivr.com/v1/package/gh/List-KR/NamuLink/badge)](https://www.jsdelivr.com/package/gh/List-KR/NamuLink)
 
-NamuLink 유저스크립트는 애드쉴드 재삽입되는 광고와 애드쉴드의 가상 무결성 레이어를 바이패스합니다
+NamuLink 유저스크립트는 나무위키에 있는 처리하기 복잡하고 고급 난독화 시스템 (커스텀 Base64 인코더/디코더 및 [RC4 스트림 암호화](https://en.wikipedia.org/wiki/RC4))를 우회하거나 역이용하여 직접 로드되는 파워링크를 차단합니다.
 
 NamuLink 유저스크립트는 AdGuard와 애드블록 커뮤니티에 의해 관리되고 있습니다.
 
@@ -32,7 +32,7 @@ https://cdn.jsdelivr.net/npm/@list-kr/namulink@latest/dist/NamuLink.user.js
   ```
   5. `OK` 버튼을 누르십시오.
   6. 유저스크립트의 메타데이터를 확인하시고 `Confirm installation`를 누르십시오.
-  7. 애드쉴드에 보호받고 있는 웹 사이트를 열고 있는 탭으로 돌아가신 뒤에 새로고침하십시오.
+  7. 나무위키를 열고 있는 탭으로 돌아가신 뒤에 새로고침하십시오.
 
 - AdGuard for Windows
   1. 빠른 시작 세션에 있는 URL를 클릭하여 설치하십시오.
