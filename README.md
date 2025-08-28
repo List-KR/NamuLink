@@ -6,6 +6,9 @@ NamuLink 유저스크립트는 나무위키에 있는 처리하기 복잡하고 
 
 NamuLink 유저스크립트는 AdGuard와 애드블록 커뮤니티에 의해 관리되고 있습니다.
 
+설치/이용 과정에서 도움이 필요하시거나 궁금증이 있으시다면 GitHub Discussions를 이용해 주세요.
+사용 도중에 해당 유저스크립트가 문제를 발생시킨다고 생각되시면 GitHub Issues를 이용해 주세요.
+
 > [!IMPORTANT]
 > NamuLink 유저스크립트 유지보수자는 NamuLink 유저스크립트와 함께 아래 애드블록들 중 하나를 사용하실 것을 권장합니다:
 > - AdGuard
