@@ -37,11 +37,12 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^22.18.0"
+    "@types/node": "^22.18.1",
+    "es-toolkit": "^1.39.10"
   },
   "devDependencies": {
     "esbuild": "^0.25.9",
-    "eslint": "^9.34.0",
+    "eslint": "^9.35.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.42.0"
   }
